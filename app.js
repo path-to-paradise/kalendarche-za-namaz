@@ -488,6 +488,10 @@ function getIntervalAttrs(startDate, endDate) {
 
 const NOW_BADGE_HTML = '<span class="now-badge">сега</span>';
 
+function getIconBadge(iconSvg) {
+    return `<span class="icon-badge">${iconSvg}</span>`;
+}
+
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
 
@@ -550,37 +554,37 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
             </div>
             <div class="prayer-list">
                 <div class="prayer"${fajrInterval}>
-                    <span class="name">${PRAYER_ICONS.fajr}Сабах${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}Сабах${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(down, sunrise)}
                 </div>
                 <div class="prayer">
-                    <span class="name">${PRAYER_ICONS.sunrise}Изгрев</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sunrise)}Изгрев</span>
                     ${getTimeWithLabelHtml(sunrise, 'край на Сабах')}
                 </div>
                 <div class="prayer prayer--voluntary"${duhaInterval}>
-                    <span class="name">${PRAYER_ICONS.duha}Духа${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.duha)}Духа${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(duha, dhuhr)}
                 </div>
                 <div class="prayer${isFriday ? ' prayer--jumah' : ''}"${dhuhrInterval}>
-                    <span class="name">${PRAYER_ICONS.sun}${
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${
         isFriday ? 'Джумая' : 'Пладнина'
     }${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(dhuhr, asr)}
                 </div>
                 <div class="prayer"${asrInterval}>
-                    <span class="name">${PRAYER_ICONS.sun}Икинди${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sun)}Икинди${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(asr, maghrib)}
                 </div>
                 <div class="prayer"${maghribInterval}>
-                    <span class="name">${PRAYER_ICONS.sunset}Акшам${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}Акшам${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(maghrib, isha)}
                 </div>
                 <div class="prayer"${ishaInterval}>
-                    <span class="name">${PRAYER_ICONS.isha}Еция / Витр${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.isha)}Еция / Витр${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(isha, nextDayFajr)}
                 </div>
                 <div class="prayer prayer--voluntary">
-                    <span class="name">${PRAYER_ICONS.tehajjud}Техадж-джуд</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.tehajjud)}Техадж-джуд</span>
                     ${getTimeRangeHtml(tehajjud, nextDayFajr)}
                 </div>
             </div>
