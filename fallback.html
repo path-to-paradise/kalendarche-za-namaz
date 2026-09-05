@@ -6,6 +6,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Календар за намаз</title>
         <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+        <script>
+            (function () {
+                var mode = localStorage.getItem('themeMode') || 'system';
+                var prefersDark = window.matchMedia(
+                    '(prefers-color-scheme: dark)'
+                ).matches;
+                var resolved =
+                    mode === 'system' ? (prefersDark ? 'dark' : 'light') : mode;
+                document.documentElement.setAttribute('data-theme', resolved);
+
+                var colorTheme = localStorage.getItem('colorTheme');
+                if (colorTheme && colorTheme !== 'green') {
+                    document.documentElement.setAttribute(
+                        'data-color-theme',
+                        colorTheme
+                    );
+                }
+            })();
+        </script>
         <link rel="stylesheet" href="./style.css" />
         <link rel="manifest" href="/manifest.json" />
         <link

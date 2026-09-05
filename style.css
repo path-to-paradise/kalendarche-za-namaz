@@ -1,6 +1,8 @@
 :root {
+    color-scheme: light;
     --color-primary: #2e8b57;
     --color-primary-dark: #1f6b41;
+    --color-primary-rgb: 46, 139, 87;
     --color-bg: #f2f4f3;
     --color-surface: #ffffff;
     --color-surface-alt: #f5f7f5;
@@ -15,6 +17,41 @@
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
+}
+
+:root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-bg: #0c100e;
+    --color-surface: #161e1a;
+    --color-surface-alt: #232d28;
+    --color-text: #f2f5f2;
+    --color-muted: #94a49d;
+    --color-border: #313d37;
+    --shadow-elevated: 0 16px 34px rgba(0, 0, 0, 0.55);
+}
+
+:root[data-color-theme='blue'] {
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-primary-rgb: 37, 99, 235;
+}
+
+:root[data-color-theme='teal'] {
+    --color-primary: #0d9488;
+    --color-primary-dark: #0f766e;
+    --color-primary-rgb: 13, 148, 136;
+}
+
+:root[data-color-theme='purple'] {
+    --color-primary: #7c3aed;
+    --color-primary-dark: #6d28d9;
+    --color-primary-rgb: 124, 58, 237;
+}
+
+:root[data-color-theme='amber'] {
+    --color-primary: #d97706;
+    --color-primary-dark: #b45309;
+    --color-primary-rgb: 217, 119, 6;
 }
 
 * {
@@ -140,7 +177,31 @@ body {
     flex: 0 0 auto;
 }
 
-.install-modal {
+.settings-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6em;
+    height: 2.6em;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.settings-button:hover {
+    background: rgba(255, 255, 255, 0.26);
+}
+
+.settings-button svg {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.modal {
     position: fixed;
     inset: 0;
     z-index: 100;
@@ -151,11 +212,11 @@ body {
     background: rgba(0, 0, 0, 0.5);
 }
 
-.install-modal[hidden] {
+.modal[hidden] {
     display: none;
 }
 
-.install-modal__card {
+.modal__card {
     position: relative;
     width: 100%;
     max-width: 360px;
@@ -165,24 +226,24 @@ body {
     padding: 1.5rem 1.5rem 1.25rem;
 }
 
-.install-modal__card h3 {
+.modal__card h3 {
     margin: 0 0 0.75rem;
     font-size: 1.1rem;
     color: var(--color-text);
 }
 
-.install-modal__card ol {
+.modal__card ol {
     margin: 0;
     padding-left: 1.2rem;
     color: var(--color-text);
     line-height: 1.6;
 }
 
-.install-modal__card li {
+.modal__card li {
     margin-bottom: 0.6rem;
 }
 
-.install-modal__card li:last-child {
+.modal__card li:last-child {
     margin-bottom: 0;
 }
 
@@ -193,7 +254,7 @@ body {
     color: var(--color-primary);
 }
 
-.install-modal__close {
+.modal__close {
     position: absolute;
     top: 0.6rem;
     right: 0.6rem;
@@ -206,6 +267,66 @@ body {
     font-size: 1.2rem;
     line-height: 1;
     cursor: pointer;
+}
+
+.settings-section-label {
+    margin: 1.1rem 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+}
+
+.settings-section-label:first-of-type {
+    margin-top: 0;
+}
+
+.theme-toggle {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.theme-toggle__option {
+    flex: 1;
+    padding: 0.55em 0.4em;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.theme-toggle__option.is-active {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.color-swatches {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.color-swatch {
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: var(--swatch-color);
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.color-swatch.is-active {
+    box-shadow:
+        0 0 0 2px var(--color-surface),
+        0 0 0 4px var(--swatch-color);
 }
 
 @media (min-width: 640px) {
@@ -409,7 +530,7 @@ main#content {
     margin-left: 0.5em;
     padding: 0.2em 0.55em 0.2em 0.45em;
     border-radius: var(--radius-pill);
-    background: rgba(46, 139, 87, 0.1);
+    background: rgba(var(--color-primary-rgb), 0.12);
     vertical-align: middle;
     font-size: 0.65em;
     font-weight: 700;

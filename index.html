@@ -6,6 +6,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Календар за намаз 2025</title>
         <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+        <script>
+            (function () {
+                var mode = localStorage.getItem('themeMode') || 'system';
+                var prefersDark = window.matchMedia(
+                    '(prefers-color-scheme: dark)'
+                ).matches;
+                var resolved =
+                    mode === 'system' ? (prefersDark ? 'dark' : 'light') : mode;
+                document.documentElement.setAttribute('data-theme', resolved);
+
+                var colorTheme = localStorage.getItem('colorTheme');
+                if (colorTheme && colorTheme !== 'green') {
+                    document.documentElement.setAttribute(
+                        'data-color-theme',
+                        colorTheme
+                    );
+                }
+            })();
+        </script>
         <link rel="stylesheet" href="./style.css" />
         <link rel="manifest" href="/manifest.json" />
         <link
@@ -91,11 +110,32 @@
                     </svg>
                     Инсталирай
                 </button>
+                <button
+                    id="settings-button"
+                    class="settings-button"
+                    type="button"
+                    aria-label="Настройки"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 0 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.56 1.04Z"
+                        />
+                    </svg>
+                </button>
             </header>
-            <div id="ios-install-instructions" class="install-modal" hidden>
-                <div class="install-modal__card">
+            <div id="ios-install-instructions" class="modal" hidden>
+                <div class="modal__card">
                     <button
-                        class="install-modal__close"
+                        class="modal__close"
                         type="button"
                         aria-label="Затвори"
                     >
@@ -133,6 +173,86 @@
                             горе вдясно.
                         </li>
                     </ol>
+                </div>
+            </div>
+            <div id="settings-modal" class="modal" hidden>
+                <div class="modal__card">
+                    <button
+                        class="modal__close"
+                        type="button"
+                        aria-label="Затвори"
+                    >
+                        &times;
+                    </button>
+                    <h3>Настройки</h3>
+
+                    <p class="settings-section-label">Тема</p>
+                    <div class="theme-toggle" role="group" aria-label="Тема">
+                        <button
+                            type="button"
+                            class="theme-toggle__option"
+                            data-theme-mode="light"
+                        >
+                            Светла
+                        </button>
+                        <button
+                            type="button"
+                            class="theme-toggle__option"
+                            data-theme-mode="dark"
+                        >
+                            Тъмна
+                        </button>
+                        <button
+                            type="button"
+                            class="theme-toggle__option"
+                            data-theme-mode="system"
+                        >
+                            Системна
+                        </button>
+                    </div>
+
+                    <p class="settings-section-label">Цвят</p>
+                    <div
+                        class="color-swatches"
+                        role="group"
+                        aria-label="Цветова тема"
+                    >
+                        <button
+                            type="button"
+                            class="color-swatch"
+                            data-color-theme-option="green"
+                            style="--swatch-color: #2e8b57"
+                            aria-label="Зелен"
+                        ></button>
+                        <button
+                            type="button"
+                            class="color-swatch"
+                            data-color-theme-option="blue"
+                            style="--swatch-color: #2563eb"
+                            aria-label="Син"
+                        ></button>
+                        <button
+                            type="button"
+                            class="color-swatch"
+                            data-color-theme-option="teal"
+                            style="--swatch-color: #0d9488"
+                            aria-label="Тюркоазен"
+                        ></button>
+                        <button
+                            type="button"
+                            class="color-swatch"
+                            data-color-theme-option="purple"
+                            style="--swatch-color: #7c3aed"
+                            aria-label="Лилав"
+                        ></button>
+                        <button
+                            type="button"
+                            class="color-swatch"
+                            data-color-theme-option="amber"
+                            style="--swatch-color: #d97706"
+                            aria-label="Кехлибарен"
+                        ></button>
+                    </div>
                 </div>
             </div>
             <main id="content">

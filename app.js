@@ -117,7 +117,7 @@ function setupInstallPrompt() {
             '#ios-install-instructions'
         );
         const closeButton = iosInstructions?.querySelector(
-            '.install-modal__close'
+            '.modal__close'
         );
 
         installButton.hidden = false;
@@ -159,8 +159,104 @@ function setupInstallPrompt() {
     });
 }
 
+const THEME_MODE_STORAGE_KEY = 'themeMode';
+const COLOR_THEME_STORAGE_KEY = 'colorTheme';
+
+function resolveThemeMode(mode) {
+    if (mode === 'system') {
+        const prefersDark = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+        ).matches;
+        return prefersDark ? 'dark' : 'light';
+    }
+    return mode;
+}
+
+function applyThemeMode(mode) {
+    document.documentElement.setAttribute('data-theme', resolveThemeMode(mode));
+}
+
+function applyColorTheme(colorTheme) {
+    if (colorTheme && colorTheme !== 'green') {
+        document.documentElement.setAttribute('data-color-theme', colorTheme);
+    } else {
+        document.documentElement.removeAttribute('data-color-theme');
+    }
+}
+
+function setupThemeSettings() {
+    const settingsButton = document.querySelector('#settings-button');
+    const settingsModal = document.querySelector('#settings-modal');
+    const closeButton = settingsModal?.querySelector('.modal__close');
+    const themeButtons = settingsModal?.querySelectorAll('[data-theme-mode]');
+    const colorButtons = settingsModal?.querySelectorAll(
+        '[data-color-theme-option]'
+    );
+
+    let themeMode = localStorage.getItem(THEME_MODE_STORAGE_KEY) || 'system';
+    let colorTheme = localStorage.getItem(COLOR_THEME_STORAGE_KEY) || 'green';
+
+    const updateActiveButtons = () => {
+        themeButtons?.forEach((button) => {
+            button.classList.toggle(
+                'is-active',
+                button.dataset.themeMode === themeMode
+            );
+        });
+        colorButtons?.forEach((button) => {
+            button.classList.toggle(
+                'is-active',
+                button.dataset.colorThemeOption === colorTheme
+            );
+        });
+    };
+
+    applyThemeMode(themeMode);
+    applyColorTheme(colorTheme);
+    updateActiveButtons();
+
+    settingsButton?.addEventListener('click', () => {
+        settingsModal.hidden = false;
+    });
+    closeButton?.addEventListener('click', () => {
+        settingsModal.hidden = true;
+    });
+    settingsModal?.addEventListener('click', (event) => {
+        if (event.target === settingsModal) {
+            settingsModal.hidden = true;
+        }
+    });
+
+    themeButtons?.forEach((button) => {
+        button.addEventListener('click', () => {
+            themeMode = button.dataset.themeMode;
+            localStorage.setItem(THEME_MODE_STORAGE_KEY, themeMode);
+            applyThemeMode(themeMode);
+            updateActiveButtons();
+        });
+    });
+
+    colorButtons?.forEach((button) => {
+        button.addEventListener('click', () => {
+            colorTheme = button.dataset.colorThemeOption;
+            localStorage.setItem(COLOR_THEME_STORAGE_KEY, colorTheme);
+            applyColorTheme(colorTheme);
+            updateActiveButtons();
+        });
+    });
+
+    window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', () => {
+            if (themeMode === 'system') {
+                applyThemeMode(themeMode);
+            }
+        });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     setupInstallPrompt();
+    setupThemeSettings();
 
     let selectedCity = localStorage.getItem('selectedCity');
     const selectedCityElement = document.querySelector('#selected-city');
