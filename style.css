@@ -107,12 +107,6 @@ body {
     color: var(--color-text);
 }
 
-.app-version {
-    margin: 0;
-    font-size: 0.72rem;
-    opacity: 0.75;
-}
-
 @media (min-width: 640px) {
     .header {
         flex-direction: row;
@@ -121,10 +115,6 @@ body {
         gap: 1.5rem;
         padding-left: calc(2rem + var(--safe-left));
         padding-right: calc(2rem + var(--safe-right));
-    }
-
-    .app-version {
-        order: 3;
     }
 
     .city-select-wrapper {
@@ -244,7 +234,7 @@ main#content {
     background: var(--color-surface-alt);
 }
 
-.prayer--tehajjud {
+.prayer--voluntary {
     background: transparent;
     border: 1px dashed var(--color-border);
 }
@@ -265,7 +255,7 @@ main#content {
     color: var(--color-primary);
 }
 
-.prayer--tehajjud .icon {
+.prayer--voluntary .icon {
     color: var(--color-muted);
 }
 
@@ -333,59 +323,75 @@ main#content {
 
 @media (max-height: 700px) {
     .header {
-        padding-top: calc(0.6rem + var(--safe-top));
-        padding-bottom: 0.6rem;
-        gap: 0.4rem;
-    }
-
-    .app-version {
-        display: none;
-    }
-
-    .day-card {
-        padding: 0.85rem 1rem;
-    }
-
-    .date-heading {
-        margin-bottom: 0.6rem;
-        gap: 0.25rem;
-    }
-
-    .prayer-list {
+        padding-top: calc(0.5rem + var(--safe-top));
+        padding-bottom: 0.5rem;
         gap: 0.35rem;
     }
 
+    .day-card {
+        padding: 0.65rem 0.85rem;
+    }
+
+    .date-heading {
+        gap: 0.3rem;
+        margin-bottom: 0.45rem;
+    }
+
+    .date {
+        font-size: 1.05rem;
+    }
+
+    .prayer-list {
+        gap: 0.3rem;
+    }
+
     .prayer {
-        padding: 0.45em 0.85em;
+        padding: 0.35em 0.8em;
+    }
+
+    .prayer .name {
+        font-size: 0.9rem;
+    }
+
+    .prayer .time {
+        font-size: 1.05rem;
     }
 }
 
 @media (max-height: 480px) {
+    .day-card {
+        padding: 0.4rem 0.75rem;
+    }
+
     .date-heading {
         flex-direction: row;
         justify-content: center;
-        gap: 0.6rem;
-        margin-bottom: 0.4rem;
-    }
-
-    .day-card {
-        padding: 0.6rem 0.85rem;
+        gap: 0.5rem;
+        margin-bottom: 0.2rem;
     }
 
     .prayer-list {
-        gap: 0.25rem;
+        gap: 0.12rem;
     }
 
     .prayer {
-        padding: 0.3em 0.75em;
+        padding: 0.14em 0.7em;
     }
 
     .date {
-        font-size: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .prayer .name {
+        font-size: 0.8rem;
     }
 
     .prayer .time {
-        font-size: 1rem;
+        font-size: 0.88rem;
+    }
+
+    .ramadan-countdown {
+        display: none;
     }
 }
 
