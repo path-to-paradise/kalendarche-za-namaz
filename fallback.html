@@ -16,17 +16,21 @@
     </head>
 
     <body>
-        <header class="header">
-            <h1 class="app-title">Времето за намаз</h1>
-        </header>
-        <main id="content">
-            <h2>Оппа!</h2>
-            <p>
-                За съжаление не можете да видите тази страницата, защото нямате
-                интернет
-            </p>
-            <a href="/">Върнете се обратно</a>
-        </main>
+        <div class="app-shell">
+            <header class="header">
+                <h1 class="app-title">Времето за намаз</h1>
+            </header>
+            <main id="content" class="fallback-content">
+                <div class="day-card fallback-card">
+                    <h2 class="date">Оппа!</h2>
+                    <p>
+                        За съжаление не можете да видите тази страницата,
+                        защото нямате интернет
+                    </p>
+                    <a class="back-link" href="/">Върнете се обратно</a>
+                </div>
+            </main>
+        </div>
         <script src="./app.js"></script>
     </body>
 </html>

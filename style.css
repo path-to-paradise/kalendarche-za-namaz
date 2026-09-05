@@ -1,94 +1,374 @@
+:root {
+    --color-primary: #2e8b57;
+    --color-primary-dark: #1f6b41;
+    --color-bg: #f2f4f3;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f5f7f5;
+    --color-text: #1a1f1c;
+    --color-muted: #6b7280;
+    --color-border: #e3e7e3;
+    --radius-lg: 1.5rem;
+    --radius-md: 0.9rem;
+    --radius-pill: 999px;
+    --shadow-elevated: 0 12px 30px rgba(15, 40, 25, 0.12);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 html,
 body {
-    position: relative;
     height: 100%;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
 }
 
 body {
-    background: #eee;
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    color: #000;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    width: 100%;
+    background: var(--color-bg);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.swiper {
-    width: 100%;
+.app-shell {
+    display: flex;
+    flex-direction: column;
     height: 100vh;
-}
-
-.swiper-wrapper {
-}
-
-.swiper-slide {
-    text-align: center;
-    font-size: 18px;
-    background: #fff;
-    display: block;
+    height: 100dvh;
 }
 
 .header {
-    background: #2e8b57;
-    padding: 1.125em;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     color: #fff;
+    padding: calc(1.1rem + var(--safe-top)) calc(1rem + var(--safe-right)) 1.1rem
+        calc(1rem + var(--safe-left));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
     text-align: center;
 }
 
 .app-title {
+    font-size: clamp(1.15rem, 4.5vw, 1.6rem);
     font-weight: 700;
-    text-align: center;
-    margin-top: 0;
+    margin: 0;
+    letter-spacing: 0.01em;
 }
 
-.hidden {
-    display: none;
+.city-select-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+}
+
+.city-select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 1.1em;
+    top: 50%;
+    width: 0.55em;
+    height: 0.55em;
+    border-right: 2px solid rgba(255, 255, 255, 0.85);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.85);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
 }
 
 .city-select {
-    font-size: 1.8em;
-    padding: 0.25em 1em;
-    border-radius: 0.25em;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 0.7em 2.2em 0.7em 1.1em;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    touch-action: manipulation;
 }
 
-.times-container {
-    padding: 1.5em;
-    background: #fff;
-    color: #000;
-    border-radius: 1.2em;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+.city-select:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.75);
+    outline-offset: 2px;
+}
+
+.city-select option {
+    color: var(--color-text);
+}
+
+.app-version {
+    margin: 0;
+    font-size: 0.72rem;
+    opacity: 0.75;
+}
+
+@media (min-width: 640px) {
+    .header {
+        flex-direction: row;
+        justify-content: center;
+        text-align: left;
+        gap: 1.5rem;
+        padding-left: calc(2rem + var(--safe-left));
+        padding-right: calc(2rem + var(--safe-right));
+    }
+
+    .app-version {
+        order: 3;
+    }
+
+    .city-select-wrapper {
+        width: auto;
+    }
+}
+
+main#content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    background: var(--color-bg);
+}
+
+.swiper {
+    width: 100%;
+    max-width: 640px;
+    height: 100%;
+}
+
+.swiper-slide {
+    display: flex;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: clamp(1rem, 4vw, 2rem) clamp(0.85rem, 4vw, 1.75rem)
+        calc(clamp(1rem, 4vw, 2rem) + var(--safe-bottom));
+}
+
+.day-card {
+    width: 100%;
+    max-width: 460px;
+    margin: auto;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    padding: clamp(1.1rem, 4vw, 1.75rem);
+}
+
+.ramadan-banner {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    padding: 0.5em 1em;
+    border-radius: var(--radius-pill);
+    margin-bottom: 1rem;
+    color: #fff;
+    background: linear-gradient(90deg, #30d081, #cfd030);
+}
+
+.date-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1.1rem;
+}
+
+.day-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.25em 0.9em;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-alt);
+    color: var(--color-primary-dark);
+}
+
+.day-badge--today {
+    background: var(--color-primary);
+    color: #fff;
 }
 
 .date {
     text-align: center;
-    font-size: 1.5em;
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
     font-weight: 600;
+    margin: 0;
+}
+
+.prayer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
 }
 
 .prayer {
-    padding: 0.5em 2em;
-    background: #f9f9f9;
-    border-radius: 0.5em;
-    text-align: left;
-    margin: 0.375em 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7em 1em;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-alt);
+}
+
+.prayer--tehajjud {
+    background: transparent;
+    border: 1px dashed var(--color-border);
 }
 
 .prayer .name {
-    font-size: 1.2em;
-    margin-right: 0.25em;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.prayer .icon {
+    flex: 0 0 auto;
+    width: 1.35em;
+    height: 1.35em;
+    color: var(--color-primary);
+}
+
+.prayer--tehajjud .icon {
+    color: var(--color-muted);
 }
 
 .prayer .time {
-    font-size: 1.5em;
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
 }
 
-.ramadan {
-    text-transform: uppercase;
-	background: linear-gradient(to right, #cfd030 0%, 	#30d081 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+.fallback-content {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 5vw, 2rem);
+    text-align: center;
+    overflow-y: auto;
+}
+
+.fallback-card {
+    max-width: 420px;
+}
+
+.fallback-card p {
+    color: var(--color-muted);
+    line-height: 1.5;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.6em 1.4em;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+@media (min-width: 640px) {
+    .day-card {
+        max-width: 520px;
+        padding: 2rem 2.25rem;
+    }
+
+    .prayer {
+        padding: 0.85em 1.25em;
+    }
+
+    .prayer .time {
+        font-size: 1.3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .swiper {
+        max-width: 720px;
+    }
+
+    .day-card {
+        max-width: 600px;
+    }
+}
+
+@media (max-height: 700px) {
+    .header {
+        padding-top: calc(0.6rem + var(--safe-top));
+        padding-bottom: 0.6rem;
+        gap: 0.4rem;
+    }
+
+    .app-version {
+        display: none;
+    }
+
+    .day-card {
+        padding: 0.85rem 1rem;
+    }
+
+    .date-heading {
+        margin-bottom: 0.6rem;
+        gap: 0.25rem;
+    }
+
+    .prayer-list {
+        gap: 0.35rem;
+    }
+
+    .prayer {
+        padding: 0.45em 0.85em;
+    }
+}
+
+@media (max-height: 480px) {
+    .date-heading {
+        flex-direction: row;
+        justify-content: center;
+        gap: 0.6rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .day-card {
+        padding: 0.6rem 0.85rem;
+    }
+
+    .prayer-list {
+        gap: 0.25rem;
+    }
+
+    .prayer {
+        padding: 0.3em 0.75em;
+    }
+
+    .date {
+        font-size: 1rem;
+    }
+
+    .prayer .time {
+        font-size: 1rem;
+    }
+}
+
+.hidden {
+    display: none;
 }

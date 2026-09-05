@@ -1,3 +1,12 @@
+const PRAYER_ICONS = {
+    fajr: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.6A7 7 0 1 1 9 6a5.7 5.7 0 0 0 8.5 8.6Z"/><path d="M19 3v2.4M17.8 4.2h2.4"/></svg>',
+    sunrise: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18M8 17a4 4 0 0 1 8 0"/><path d="M12 3v3.4"/><path d="M9.5 8.4 12 6l2.5 2.4" stroke-width="1.5"/></svg>',
+    sun: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2.2M12 19v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.8 12h2.2M19 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>',
+    sunset: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18M8 17a4 4 0 0 1 8 0"/><path d="M12 3v3.4"/><path d="M9.5 5 12 7.4 14.5 5" stroke-width="1.5"/></svg>',
+    isha: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>',
+    tehajjud: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 14.3A6.6 6.6 0 1 1 9 4.3a5.4 5.4 0 0 0 7.5 10Z"/><path d="M19 3v2.2M17.9 4.1h2.2M6 15.5v1.8M5.1 16.4h1.8"/></svg>'
+};
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
         .register('/service-worker.js')
@@ -192,62 +201,72 @@ function isRamadan(ramadanStartDate, currentlyDisplayingDate) {
     return false;
 }
 
-function getPrayerTemplate(prayerTimes, fullDate, today) {
-    ({ down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes);
+function getPrayerTemplate(prayerTimes, fullDate) {
+    const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
 
     const date = fullDate.getDate();
     const month = fullDate.toLocaleString('bg', { month: 'long' });
     const year = fullDate.getFullYear();
 
-    const todayClass = isToday(fullDate) ? 'today' : 'hidden';
-    const yesterdayClass = isYesterday(fullDate) ? 'yesterday' : 'hidden';
-    
-    const ramadanStartDate = "28/02/2025";
-    const isRamadanMonthNow = isRamadan(ramadanStartDate, fullDate);
-    const ramadanClass = isRamadanMonthNow ? 'ramadan' : 'hidden';
-
-    let ramadanDay = "";
-    if(isRamadanMonthNow) {
-        ramadanDay = calculateRamadanDayNumber(ramadanStartDate, fullDate);
+    let dayBadge = '';
+    if (isToday(fullDate)) {
+        dayBadge = '<span class="day-badge day-badge--today">Днес</span>';
+    } else if (isYesterday(fullDate)) {
+        dayBadge = '<span class="day-badge">Вчера</span>';
     }
+
+    const ramadanStartDate = '28/02/2025';
+    const isRamadanMonthNow = isRamadan(ramadanStartDate, fullDate);
+    const ramadanBanner = isRamadanMonthNow
+        ? `<div class="ramadan-banner">${calculateRamadanDayNumber(
+              ramadanStartDate,
+              fullDate
+          )}-и ден от Рамадан</div>`
+        : '';
 
     const isFriday = fullDate.getDay() === 5;
 
     return `
     <div class="swiper-slide">
-        <h3 class="ramadan-text ${ramadanClass}">${ramadanDay} Ден от Месец Рамадан</h3>
-        <h2 class="date">
-            <span class="${todayClass}">Днес: </span>
-            <span class="${yesterdayClass}">Вчера: </span>
-            ${date} ${month} ${year}</h2>
-        <p class="prayer">
-            <span class="name">Сабах:</span>
-            <span data-down id="down" class="time">${down}</span>
-        </p>
-        <p class="prayer">
-            <span class="name">Изгрев:</span>
-            <span id="sunrise" class="time">${sunrise}</span>
-        </p>
-        <p class="prayer">
-            <span class="name">${isFriday ? 'Джумая' : 'Пладнина'}:</span>
-            <span id="dhuhr" class="time">${dhuhr}</span>
-        </p>
-        <p class="prayer">
-            <span class="name">Икинди:</span>
-            <span class="time">${asr}</span>
-        </p>
-        <p class="prayer">
-            <span class="name">Акшам:</span>
-            <span class="time">${maghrib}</span>
-        </p>
-        <p class="prayer">
-            <span class="name">Еция:</span>
-            <span class="time">${isha}</span>
-        </p>
-        <p class="prayer">
-            <span class="name">Техадж-джуд:</span>
-            <span class="time">${tehajjud}</span>
-        </p>
+        <div class="day-card">
+            ${ramadanBanner}
+            <div class="date-heading">
+                ${dayBadge}
+                <h2 class="date">${date} ${month} ${year}</h2>
+            </div>
+            <div class="prayer-list">
+                <div class="prayer">
+                    <span class="name">${PRAYER_ICONS.fajr}Сабах</span>
+                    <span class="time">${down}</span>
+                </div>
+                <div class="prayer">
+                    <span class="name">${PRAYER_ICONS.sunrise}Изгрев</span>
+                    <span class="time">${sunrise}</span>
+                </div>
+                <div class="prayer">
+                    <span class="name">${PRAYER_ICONS.sun}${
+        isFriday ? 'Джумая' : 'Пладнина'
+    }</span>
+                    <span class="time">${dhuhr}</span>
+                </div>
+                <div class="prayer">
+                    <span class="name">${PRAYER_ICONS.sun}Икинди</span>
+                    <span class="time">${asr}</span>
+                </div>
+                <div class="prayer">
+                    <span class="name">${PRAYER_ICONS.sunset}Акшам</span>
+                    <span class="time">${maghrib}</span>
+                </div>
+                <div class="prayer">
+                    <span class="name">${PRAYER_ICONS.isha}Еция</span>
+                    <span class="time">${isha}</span>
+                </div>
+                <div class="prayer prayer--tehajjud">
+                    <span class="name">${PRAYER_ICONS.tehajjud}Техадж-джуд</span>
+                    <span class="time">${tehajjud}</span>
+                </div>
+            </div>
+        </div>
     </div>
     `;
 }
