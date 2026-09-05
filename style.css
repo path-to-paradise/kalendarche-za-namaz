@@ -259,6 +259,12 @@ main#content {
     color: var(--color-text);
 }
 
+.time-end {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--color-muted);
+}
+
 .prayer--jumah {
     background: var(--color-primary);
 }
@@ -267,6 +273,10 @@ main#content {
 .prayer--jumah .time,
 .prayer--jumah .icon {
     color: #fff;
+}
+
+.prayer--jumah .time-end {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .fallback-content {

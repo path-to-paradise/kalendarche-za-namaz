@@ -165,7 +165,8 @@ function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
 
         const slideTemplate = getPrayerTemplate(
             allNamazForCurrentDay,
-            currentFullDate
+            currentFullDate,
+            allNamazForTheNextDay.down
         );
         swiperInstance.appendSlide(slideTemplate);
 
@@ -255,7 +256,15 @@ function isTomorrow(dateToBeCompared) {
     return isSameDay(dateToBeCompared, getRelativeDate(1));
 }
 
-function getPrayerTemplate(prayerTimes, fullDate) {
+function getTimeRangeHtml(startTime, endTime) {
+    if (!endTime || !startTime?.includes(':')) {
+        return `<span class="time">${startTime}</span>`;
+    }
+
+    return `<span class="time">${startTime}<span class="time-end"> – ${endTime}</span></span>`;
+}
+
+function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
 
     const date = fullDate.getDate();
@@ -289,7 +298,7 @@ function getPrayerTemplate(prayerTimes, fullDate) {
             <div class="prayer-list">
                 <div class="prayer">
                     <span class="name">${PRAYER_ICONS.fajr}Сабах</span>
-                    <span class="time">${down}</span>
+                    ${getTimeRangeHtml(down, sunrise)}
                 </div>
                 <div class="prayer">
                     <span class="name">${PRAYER_ICONS.sunrise}Изгрев</span>
@@ -297,29 +306,29 @@ function getPrayerTemplate(prayerTimes, fullDate) {
                 </div>
                 <div class="prayer prayer--voluntary">
                     <span class="name">${PRAYER_ICONS.duha}Духа</span>
-                    <span class="time">${duha}</span>
+                    ${getTimeRangeHtml(duha, dhuhr)}
                 </div>
                 <div class="prayer${isFriday ? ' prayer--jumah' : ''}">
                     <span class="name">${PRAYER_ICONS.sun}${
         isFriday ? 'Джумая' : 'Пладнина'
     }</span>
-                    <span class="time">${dhuhr}</span>
+                    ${getTimeRangeHtml(dhuhr, asr)}
                 </div>
                 <div class="prayer">
                     <span class="name">${PRAYER_ICONS.sun}Икинди</span>
-                    <span class="time">${asr}</span>
+                    ${getTimeRangeHtml(asr, maghrib)}
                 </div>
                 <div class="prayer">
                     <span class="name">${PRAYER_ICONS.sunset}Акшам</span>
-                    <span class="time">${maghrib}</span>
+                    ${getTimeRangeHtml(maghrib, isha)}
                 </div>
                 <div class="prayer">
                     <span class="name">${PRAYER_ICONS.isha}Еция / Витр</span>
-                    <span class="time">${isha}</span>
+                    ${getTimeRangeHtml(isha, nextDayFajr)}
                 </div>
                 <div class="prayer prayer--voluntary">
                     <span class="name">${PRAYER_ICONS.tehajjud}Техадж-джуд</span>
-                    <span class="time">${tehajjud}</span>
+                    ${getTimeRangeHtml(tehajjud, nextDayFajr)}
                 </div>
             </div>
         </div>

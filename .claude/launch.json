@@ -4,8 +4,8 @@
         {
             "name": "kalendarche",
             "runtimeExecutable": "npx",
-            "runtimeArgs": ["serve", "-l", "5173", "."],
-            "port": 5173
+            "runtimeArgs": ["serve", "-l", "5192", "."],
+            "port": 5192
         }
     ]
 }
