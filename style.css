@@ -46,6 +46,8 @@ body {
 }
 
 .header {
+    position: relative;
+    z-index: 1;
     flex: 0 0 auto;
     background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     color: #fff;
@@ -56,6 +58,7 @@ body {
     align-items: center;
     gap: 0.65rem;
     text-align: center;
+    box-shadow: 0 4px 16px rgba(15, 40, 25, 0.18);
 }
 
 .app-title {
@@ -221,11 +224,51 @@ body {
 }
 
 main#content {
+    position: relative;
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
     justify-content: center;
     background: var(--color-bg);
+}
+
+.today-button {
+    position: absolute;
+    left: 50%;
+    bottom: calc(1.1rem + var(--safe-bottom));
+    transform: translateX(-50%);
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.65em 1.3em;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-elevated);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.today-button[hidden] {
+    display: none;
+}
+
+.today-button svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex: 0 0 auto;
+}
+
+.today-button:active {
+    transform: translateX(-50%) scale(0.96);
 }
 
 .swiper {
@@ -316,6 +359,7 @@ main#content {
 }
 
 .prayer {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -323,6 +367,7 @@ main#content {
     padding: 0.7em 1em;
     border-radius: var(--radius-md);
     background: var(--color-surface-alt);
+    transition: box-shadow 0.25s ease;
 }
 
 .prayer--voluntary {
@@ -395,16 +440,18 @@ main#content {
 
 .now-badge {
     display: none;
-    margin-left: 0.5em;
-    padding: 0.15em 0.55em;
+    position: absolute;
+    top: -0.65em;
+    left: 1em;
+    padding: 0.15em 0.65em;
     border-radius: var(--radius-pill);
     background: var(--color-primary);
     color: #fff;
-    font-size: 0.6em;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
-    vertical-align: middle;
+    letter-spacing: 0.04em;
+    box-shadow: 0 2px 6px rgba(15, 40, 25, 0.25);
 }
 
 .prayer--current {
@@ -420,7 +467,7 @@ main#content {
 }
 
 .prayer--jumah .now-badge {
-    background: rgba(255, 255, 255, 0.9);
+    background: #fff;
     color: var(--color-primary-dark);
 }
 

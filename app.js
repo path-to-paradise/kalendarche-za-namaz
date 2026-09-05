@@ -184,6 +184,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         mousewheel: true
     });
 
+    const todayButton = document.querySelector('#today-button');
+    swiperInstance.on('slideChange', () => {
+        todayButton.hidden = swiperInstance.activeIndex === TODAY_SLIDE_INDEX;
+    });
+    todayButton.addEventListener('click', () => {
+        swiperInstance.slideTo(TODAY_SLIDE_INDEX);
+    });
+
     selectedCityElement.addEventListener('change', (event) =>
         changeTimeToSelectedCity(event, swiperInstance)
     );
@@ -202,6 +210,9 @@ async function changeTimeToSelectedCity(event, swiperInstance) {
     swiperInstance.removeAllSlides();
     renderPrayerSlides(prayerTimeTable, swiperInstance);
 }
+
+// Rendering always starts at yesterday, so today is always the 2nd slide.
+const TODAY_SLIDE_INDEX = 1;
 
 function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
     let currentFullDate = new Date();
@@ -242,7 +253,7 @@ function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
         currentFullDate = getNextDate(currentFullDate, 1);
     }
 
-    swiperInstance.slideTo(1);
+    swiperInstance.slideTo(TODAY_SLIDE_INDEX);
     updateCurrentPrayerHighlight();
 }
 
