@@ -301,7 +301,7 @@ function getPrayerTemplate(prayerTimes, fullDate) {
                     <span class="name">${PRAYER_ICONS.duha}Духа</span>
                     <span class="time">${duha}</span>
                 </div>
-                <div class="prayer">
+                <div class="prayer${isFriday ? ' prayer--jumah' : ''}">
                     <span class="name">${PRAYER_ICONS.sun}${
         isFriday ? 'Джумая' : 'Пладнина'
     }</span>

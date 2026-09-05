@@ -259,6 +259,16 @@ main#content {
     color: var(--color-text);
 }
 
+.prayer--jumah {
+    background: var(--color-primary);
+}
+
+.prayer--jumah .name,
+.prayer--jumah .time,
+.prayer--jumah .icon {
+    color: #fff;
+}
+
 .fallback-content {
     flex: 1 1 auto;
     display: flex;
