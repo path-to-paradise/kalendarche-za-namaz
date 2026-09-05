@@ -86,9 +86,6 @@ function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
             allNamazForCurrentDay.maghrib,
             allNamazForTheNextDay.down
         );
-        if (currentDate == 30) {
-
-        }
         allNamazForCurrentDay.tehajjud = tehajjudPrayerTime;
 
         const slideTemplate = getPrayerTemplate(
@@ -119,36 +116,34 @@ function getNextDate(currentUserDate, daysLater) {
     return fullDate;
 }
 
+function timeStringToMinutes(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+function minutesToTimeString(totalMinutes) {
+    const normalizedMinutes =
+        ((Math.round(totalMinutes) % (24 * 60)) + 24 * 60) % (24 * 60);
+    const hours = Math.floor(normalizedMinutes / 60);
+    const minutes = normalizedMinutes % 60;
+
+    return `${hours}:${String(minutes).padStart(2, '0')}`;
+}
+
 function calculateTehajjudPrayer(maghribPrayerTime, nextDayFajrPrayerTime) {
     if (!maghribPrayerTime || !nextDayFajrPrayerTime) {
         return 'липсва';
     }
 
-    const [maghribHours, maghribMinutes] = maghribPrayerTime.split(':');
+    const maghribInMinutes = timeStringToMinutes(maghribPrayerTime);
+    const nextDayFajrInMinutes =
+        timeStringToMinutes(nextDayFajrPrayerTime) + 24 * 60;
 
-    const maghribTimeAsDate = new Date();
-    maghribTimeAsDate.setHours(maghribHours);
-    maghribTimeAsDate.setMinutes(maghribMinutes);
+    const nightDurationInMinutes = nextDayFajrInMinutes - maghribInMinutes;
+    const lastThirdOfTheNightStartsAtInMinutes =
+        nextDayFajrInMinutes - nightDurationInMinutes / 3;
 
-    const [nextDayFajrHours, nextDayFajrMinutes] =
-        nextDayFajrPrayerTime.split(':');
-    const fajrTimeAsDate = new Date();
-    fajrTimeAsDate.setDate(fajrTimeAsDate.getDate() + 1);
-    fajrTimeAsDate.setHours(nextDayFajrHours);
-    fajrTimeAsDate.setMinutes(nextDayFajrMinutes);
-
-    const nightDurationAsTimeStamp = fajrTimeAsDate - maghribTimeAsDate;
-    const oneThirdOfTheNightAsTimeStamp = nightDurationAsTimeStamp / 3;
-
-    const lastThirdOfTheNightStartsAtAsTimeStamp =
-        fajrTimeAsDate - oneThirdOfTheNightAsTimeStamp;
-    const lastThirdOfTheNightAsDate = new Date(
-        lastThirdOfTheNightStartsAtAsTimeStamp
-    );
-
-    const lastThirdOfTheNightAsString = `${lastThirdOfTheNightAsDate.getHours()}:${lastThirdOfTheNightAsDate.getMinutes()}`;
-
-    return lastThirdOfTheNightAsString;
+    return minutesToTimeString(lastThirdOfTheNightStartsAtInMinutes);
 }
 
 function isToday(dateToBeCompared) {
