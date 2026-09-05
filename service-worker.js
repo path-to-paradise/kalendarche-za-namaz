@@ -3,13 +3,22 @@ const DYNAMIC_CACHE = 'kalendarche-dynamic';
 const DYNAMIC_CACHE_LIMIT = 50;
 const CURRENT_CACHES = [STATIC_CACHE, DYNAMIC_CACHE];
 
-const STATIC_ASSETS = [
+// The app shell has no build step, so a deploy usually only changes these
+// files, not service-worker.js itself — which means the browser has no way
+// to know a new version exists. Always go to the network for them first so
+// a new deploy is picked up on the very next load; fall back to the cached
+// copy only when there is no connection.
+const APP_SHELL_PATHS = [
     '/',
     '/index.html',
     '/fallback.html',
     '/style.css',
     '/app.js',
-    '/manifest.json',
+    '/manifest.json'
+];
+
+const STATIC_ASSETS = [
+    ...APP_SHELL_PATHS,
     '/time-table/aytos-time.json',
     '/time-table/balchik-time.json',
     '/time-table/blagoevgrad-time.json',
@@ -95,6 +104,46 @@ self.addEventListener('activate', (event) => {
     );
 });
 
+const isAppShellRequest = (request) => {
+    const { pathname } = new URL(request.url);
+    return APP_SHELL_PATHS.includes(pathname);
+};
+
+const networkFirst = (request) =>
+    fetch(request)
+        .then((networkResponse) => {
+            caches
+                .open(STATIC_CACHE)
+                .then((cache) => cache.put(request, networkResponse.clone()));
+            return networkResponse;
+        })
+        .catch(
+            () =>
+                caches.match(request).then((cachedResponse) => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    if (request.headers.get('accept')?.includes('text/html')) {
+                        return caches.match('/fallback.html');
+                    }
+                })
+        );
+
+const staleWhileRevalidate = (request) =>
+    caches.match(request).then((cachedResponse) => {
+        const networkFetch = fetch(request)
+            .then((networkResponse) => {
+                caches.open(DYNAMIC_CACHE).then((cache) => {
+                    cache.put(request, networkResponse.clone());
+                    trimCache(DYNAMIC_CACHE, DYNAMIC_CACHE_LIMIT);
+                });
+                return networkResponse;
+            })
+            .catch(() => undefined);
+
+        return cachedResponse || networkFetch;
+    });
+
 self.addEventListener('fetch', (event) => {
     const { request } = event;
 
@@ -103,22 +152,8 @@ self.addEventListener('fetch', (event) => {
     }
 
     event.respondWith(
-        caches.match(request).then((cachedResponse) => {
-            const networkFetch = fetch(request)
-                .then((networkResponse) => {
-                    caches.open(DYNAMIC_CACHE).then((cache) => {
-                        cache.put(request, networkResponse.clone());
-                        trimCache(DYNAMIC_CACHE, DYNAMIC_CACHE_LIMIT);
-                    });
-                    return networkResponse;
-                })
-                .catch(() => {
-                    if (request.headers.get('accept')?.includes('text/html')) {
-                        return caches.match('/fallback.html');
-                    }
-                });
-
-            return cachedResponse || networkFetch;
-        })
+        isAppShellRequest(request)
+            ? networkFirst(request)
+            : staleWhileRevalidate(request)
     );
 });
