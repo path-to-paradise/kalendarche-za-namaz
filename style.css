@@ -180,13 +180,6 @@ main#content {
     background: linear-gradient(90deg, #ffd76a, #ffb454);
 }
 
-.ramadan-countdown {
-    text-align: center;
-    font-size: 0.78rem;
-    color: var(--color-muted);
-    margin-bottom: 0.75rem;
-}
-
 .date-heading {
     display: flex;
     flex-direction: column;
@@ -388,10 +381,6 @@ main#content {
 
     .prayer .time {
         font-size: 0.88rem;
-    }
-
-    .ramadan-countdown {
-        display: none;
     }
 }
 

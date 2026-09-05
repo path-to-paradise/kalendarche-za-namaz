@@ -60,14 +60,6 @@ function getEidInfo(fullDate) {
     return null;
 }
 
-function getNextRamadanStart(fullDate) {
-    const upcomingPeriods = RAMADAN_PERIODS.filter(
-        (period) => period.start > fullDate
-    ).sort((a, b) => a.start - b.start);
-
-    return upcomingPeriods.length > 0 ? upcomingPeriods[0].start : null;
-}
-
 function getRamadanBannerHtml(fullDate) {
     const eidInfo = getEidInfo(fullDate);
     if (eidInfo) {
@@ -91,13 +83,6 @@ function getRamadanBannerHtml(fullDate) {
         }
 
         return `<div class="ramadan-banner">${label}</div>`;
-    }
-
-    const nextRamadanStart = getNextRamadanStart(fullDate);
-    if (nextRamadanStart) {
-        const daysUntilRamadan = getDaysBetween(fullDate, nextRamadanStart);
-        const daysLabel = daysUntilRamadan === 1 ? 'ден' : 'дни';
-        return `<div class="ramadan-countdown">${daysUntilRamadan} ${daysLabel} до Рамазан</div>`;
     }
 
     return '';
