@@ -1,0 +1,12 @@
+[
+    {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.rifatcholakov.kalendarche_za_namaz.twa",
+            "sha256_cert_fingerprints": [
+                "23:7F:E8:50:1C:69:B1:32:DA:E7:C4:B3:C3:23:C8:29:60:C2:34:E6:84:8D:13:DC:4F:E9:A3:66:2F:74:BD:76"
+            ]
+        }
+    }
+]
