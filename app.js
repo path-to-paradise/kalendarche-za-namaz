@@ -94,7 +94,74 @@ if ('serviceWorker' in navigator) {
         .catch((err) => console.error('service worker not registered', err));
 }
 
+function isRunningAsInstalledApp() {
+    return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true
+    );
+}
+
+function isIosDevice() {
+    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+function setupInstallPrompt() {
+    const installButton = document.querySelector('#install-button');
+
+    if (!installButton || isRunningAsInstalledApp()) {
+        return;
+    }
+
+    if (isIosDevice()) {
+        const iosInstructions = document.querySelector(
+            '#ios-install-instructions'
+        );
+        const closeButton = iosInstructions?.querySelector(
+            '.install-modal__close'
+        );
+
+        installButton.hidden = false;
+        installButton.addEventListener('click', () => {
+            iosInstructions.hidden = false;
+        });
+        closeButton?.addEventListener('click', () => {
+            iosInstructions.hidden = true;
+        });
+        iosInstructions?.addEventListener('click', (event) => {
+            if (event.target === iosInstructions) {
+                iosInstructions.hidden = true;
+            }
+        });
+        return;
+    }
+
+    let deferredInstallPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        installButton.hidden = false;
+    });
+
+    installButton.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) {
+            return;
+        }
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        installButton.hidden = true;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installButton.hidden = true;
+        deferredInstallPrompt = null;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+    setupInstallPrompt();
+
     let selectedCity = localStorage.getItem('selectedCity');
     const selectedCityElement = document.querySelector('#selected-city');
 

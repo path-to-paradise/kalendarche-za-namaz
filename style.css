@@ -107,6 +107,104 @@ body {
     color: var(--color-text);
 }
 
+.install-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.55em 1em;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.install-button[hidden] {
+    display: none;
+}
+
+.install-button:hover {
+    background: rgba(255, 255, 255, 0.26);
+}
+
+.install-button svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex: 0 0 auto;
+}
+
+.install-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.install-modal[hidden] {
+    display: none;
+}
+
+.install-modal__card {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    padding: 1.5rem 1.5rem 1.25rem;
+}
+
+.install-modal__card h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+    color: var(--color-text);
+}
+
+.install-modal__card ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.install-modal__card li {
+    margin-bottom: 0.6rem;
+}
+
+.install-modal__card li:last-child {
+    margin-bottom: 0;
+}
+
+.share-icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    color: var(--color-primary);
+}
+
+.install-modal__close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
 @media (min-width: 640px) {
     .header {
         flex-direction: row;

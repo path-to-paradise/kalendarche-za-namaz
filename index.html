@@ -71,7 +71,70 @@
                         <option value="yambol">Ямбол</option>
                     </select>
                 </div>
+                <button
+                    id="install-button"
+                    class="install-button"
+                    type="button"
+                    hidden
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 3v12M7 10l5 5 5-5" />
+                        <path d="M4 18v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2" />
+                    </svg>
+                    Инсталирай
+                </button>
             </header>
+            <div id="ios-install-instructions" class="install-modal" hidden>
+                <div class="install-modal__card">
+                    <button
+                        class="install-modal__close"
+                        type="button"
+                        aria-label="Затвори"
+                    >
+                        &times;
+                    </button>
+                    <h3>Инсталиране на iPhone</h3>
+                    <ol>
+                        <li>
+                            Натиснете бутона
+                            <strong>Споделяне</strong>
+                            <svg
+                                class="share-icon"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M12 16V4M8 8l4-4 4 4" />
+                                <path
+                                    d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"
+                                />
+                            </svg>
+                            в лентата на Safari.
+                        </li>
+                        <li>
+                            Превъртете надолу и изберете
+                            <strong>„Добави към начален екран“</strong>.
+                        </li>
+                        <li>
+                            Натиснете
+                            <strong>„Добави“</strong>
+                            горе вдясно.
+                        </li>
+                    </ol>
+                </div>
+            </div>
             <main id="content">
                 <div id="swiper" class="swiper">
                     <!-- Additional required wrapper -->
