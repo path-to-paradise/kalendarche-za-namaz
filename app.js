@@ -188,6 +188,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         changeTimeToSelectedCity(event, swiperInstance)
     );
     renderPrayerSlides(prayerTimeTable, swiperInstance);
+
+    setInterval(updateCurrentPrayerHighlight, 30000);
 });
 
 async function changeTimeToSelectedCity(event, swiperInstance) {
@@ -241,6 +243,28 @@ function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
     }
 
     swiperInstance.slideTo(1);
+    updateCurrentPrayerHighlight();
+}
+
+function updateCurrentPrayerHighlight() {
+    const now = new Date();
+    let currentRow = null;
+
+    document.querySelectorAll('.prayer[data-start]').forEach((row) => {
+        const start = new Date(row.dataset.start);
+        const end = new Date(row.dataset.end);
+        if (now >= start && now < end) {
+            currentRow = row;
+        }
+    });
+
+    document.querySelectorAll('.prayer--current').forEach((row) => {
+        if (row !== currentRow) {
+            row.classList.remove('prayer--current');
+        }
+    });
+
+    currentRow?.classList.add('prayer--current');
 }
 
 async function getTimeForSelectedCity(selectedCity) {
@@ -335,6 +359,28 @@ function getTimeWithLabelHtml(time, label) {
     return `<span class="time">${time}<span class="time-end">${label}</span></span>`;
 }
 
+function combineDateAndTime(date, timeString) {
+    if (!timeString?.includes(':')) {
+        return null;
+    }
+
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const combined = new Date(date);
+    combined.setHours(hours, minutes, 0, 0);
+
+    return combined;
+}
+
+function getIntervalAttrs(startDate, endDate) {
+    if (!startDate || !endDate) {
+        return '';
+    }
+
+    return ` data-start="${startDate.toISOString()}" data-end="${endDate.toISOString()}"`;
+}
+
+const NOW_BADGE_HTML = '<span class="now-badge">сега</span>';
+
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
 
@@ -358,6 +404,35 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     const isFriday = fullDate.getDay() === 5;
     const duha = addMinutesToTimeString(sunrise, DUHA_MINUTES_AFTER_SUNRISE);
 
+    const nextCalendarDay = new Date(fullDate);
+    nextCalendarDay.setDate(nextCalendarDay.getDate() + 1);
+    const nextDayFajrDate = combineDateAndTime(nextCalendarDay, nextDayFajr);
+
+    const fajrInterval = getIntervalAttrs(
+        combineDateAndTime(fullDate, down),
+        combineDateAndTime(fullDate, sunrise)
+    );
+    const duhaInterval = getIntervalAttrs(
+        combineDateAndTime(fullDate, duha),
+        combineDateAndTime(fullDate, dhuhr)
+    );
+    const dhuhrInterval = getIntervalAttrs(
+        combineDateAndTime(fullDate, dhuhr),
+        combineDateAndTime(fullDate, asr)
+    );
+    const asrInterval = getIntervalAttrs(
+        combineDateAndTime(fullDate, asr),
+        combineDateAndTime(fullDate, maghrib)
+    );
+    const maghribInterval = getIntervalAttrs(
+        combineDateAndTime(fullDate, maghrib),
+        combineDateAndTime(fullDate, isha)
+    );
+    const ishaInterval = getIntervalAttrs(
+        combineDateAndTime(fullDate, isha),
+        nextDayFajrDate
+    );
+
     return `
     <div class="swiper-slide">
         <div class="day-card">
@@ -367,34 +442,34 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                 <h2 class="date">${capitalizedWeekday}, ${date} ${month} ${year}</h2>
             </div>
             <div class="prayer-list">
-                <div class="prayer">
-                    <span class="name">${PRAYER_ICONS.fajr}Сабах</span>
+                <div class="prayer"${fajrInterval}>
+                    <span class="name">${PRAYER_ICONS.fajr}Сабах${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(down, sunrise)}
                 </div>
                 <div class="prayer">
                     <span class="name">${PRAYER_ICONS.sunrise}Изгрев</span>
                     ${getTimeWithLabelHtml(sunrise, 'край на Сабах')}
                 </div>
-                <div class="prayer prayer--voluntary">
-                    <span class="name">${PRAYER_ICONS.duha}Духа</span>
+                <div class="prayer prayer--voluntary"${duhaInterval}>
+                    <span class="name">${PRAYER_ICONS.duha}Духа${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(duha, dhuhr)}
                 </div>
-                <div class="prayer${isFriday ? ' prayer--jumah' : ''}">
+                <div class="prayer${isFriday ? ' prayer--jumah' : ''}"${dhuhrInterval}>
                     <span class="name">${PRAYER_ICONS.sun}${
         isFriday ? 'Джумая' : 'Пладнина'
-    }</span>
+    }${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(dhuhr, asr)}
                 </div>
-                <div class="prayer">
-                    <span class="name">${PRAYER_ICONS.sun}Икинди</span>
+                <div class="prayer"${asrInterval}>
+                    <span class="name">${PRAYER_ICONS.sun}Икинди${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(asr, maghrib)}
                 </div>
-                <div class="prayer">
-                    <span class="name">${PRAYER_ICONS.sunset}Акшам</span>
+                <div class="prayer"${maghribInterval}>
+                    <span class="name">${PRAYER_ICONS.sunset}Акшам${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(maghrib, isha)}
                 </div>
-                <div class="prayer">
-                    <span class="name">${PRAYER_ICONS.isha}Еция / Витр</span>
+                <div class="prayer"${ishaInterval}>
+                    <span class="name">${PRAYER_ICONS.isha}Еция / Витр${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(isha, nextDayFajr)}
                 </div>
                 <div class="prayer prayer--voluntary">
