@@ -5,7 +5,6 @@ const PRAYER_ICONS = {
     sunset: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18M8 17a4 4 0 0 1 8 0"/><path d="M12 3v3.4"/><path d="M9.5 5 12 7.4 14.5 5" stroke-width="1.5"/></svg>',
     isha: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>',
     duha: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="14" r="3.6"/><path d="M12 6v2M6.5 9.5l1.4 1.4M17.5 9.5l-1.4 1.4M3.5 17h17"/></svg>',
-    witr: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.5 14A7.2 7.2 0 1 1 10 5.3a5.8 5.8 0 0 0 8.5 8.7Z"/><circle cx="18.5" cy="6" r="1.1" fill="currentColor" stroke="none"/></svg>',
     tehajjud: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 14.3A6.6 6.6 0 1 1 9 4.3a5.4 5.4 0 0 0 7.5 10Z"/><path d="M19 3v2.2M17.9 4.1h2.2M6 15.5v1.8M5.1 16.4h1.8"/></svg>'
 };
 
@@ -278,7 +277,6 @@ function getPrayerTemplate(prayerTimes, fullDate) {
 
     const isFriday = fullDate.getDay() === 5;
     const duha = addMinutesToTimeString(sunrise, DUHA_MINUTES_AFTER_SUNRISE);
-    const witr = isha;
 
     return `
     <div class="swiper-slide">
@@ -315,16 +313,9 @@ function getPrayerTemplate(prayerTimes, fullDate) {
                     <span class="name">${PRAYER_ICONS.sunset}Акшам</span>
                     <span class="time">${maghrib}</span>
                 </div>
-                <div class="prayer-group">
-                    <div class="prayer-group__row">
-                        <span class="name">${PRAYER_ICONS.isha}Еция</span>
-                        <span class="time">${isha}</span>
-                    </div>
-                    <div class="prayer-group__divider"></div>
-                    <div class="prayer-group__row">
-                        <span class="name">${PRAYER_ICONS.witr}Витр</span>
-                        <span class="time">${witr}</span>
-                    </div>
+                <div class="prayer">
+                    <span class="name">${PRAYER_ICONS.isha}Еция / Витр</span>
+                    <span class="time">${isha}</span>
                 </div>
                 <div class="prayer prayer--voluntary">
                     <span class="name">${PRAYER_ICONS.tehajjud}Техадж-джуд</span>
