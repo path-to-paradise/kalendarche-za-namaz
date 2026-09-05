@@ -261,7 +261,11 @@ function getTimeRangeHtml(startTime, endTime) {
         return `<span class="time">${startTime}</span>`;
     }
 
-    return `<span class="time">${startTime}<span class="time-end"> – ${endTime}</span></span>`;
+    return `<span class="time">${startTime}<span class="time-end"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>${endTime}</span></span>`;
+}
+
+function getTimeWithLabelHtml(time, label) {
+    return `<span class="time">${time}<span class="time-end">${label}</span></span>`;
 }
 
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
@@ -302,7 +306,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                 </div>
                 <div class="prayer">
                     <span class="name">${PRAYER_ICONS.sunrise}Изгрев</span>
-                    <span class="time">${sunrise}</span>
+                    ${getTimeWithLabelHtml(sunrise, 'край на Сабах')}
                 </div>
                 <div class="prayer prayer--voluntary">
                     <span class="name">${PRAYER_ICONS.duha}Духа</span>
