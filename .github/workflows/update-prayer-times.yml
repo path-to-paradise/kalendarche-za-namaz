@@ -1,0 +1,102 @@
+name: Update prayer time tables
+
+# Fetches the new year's prayer times from grandmufti.bg (via the
+# convert-grantmufti-prayer-table-to-json tool), validates the result,
+# and only if it looks correct, commits and pushes it into time-table/.
+#
+# Runs on GitHub's own infrastructure, not on any local machine, so it
+# doesn't depend on any particular computer being powered on.
+#
+# The converter has no "year" parameter of its own — it just returns
+# whatever year grandmufti.bg is currently serving. If the site hasn't
+# published the new year yet when this runs, validation still passes
+# (the data is just unchanged from last year), and the "no changes"
+# step below correctly does nothing.
+
+on:
+  schedule:
+    # 01:00 UTC on Jan 1 = 03:00 Europe/Sofia (winter time, no DST in January)
+    - cron: '0 1 1 1 *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout app repo
+        uses: actions/checkout@v4
+
+      - name: Checkout converter repo
+        uses: actions/checkout@v4
+        with:
+          repository: path-to-paradise/convert-grantmufti-prayer-table-to-json
+          path: converter
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install converter dependencies
+        working-directory: converter
+        run: npm install --no-audit --no-fund
+
+      - name: Fetch prayer times from grandmufti.bg
+        working-directory: converter
+        run: npm start
+
+      - name: Validate fetched data
+        working-directory: converter
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const timeTableDir = path.join('..', 'time-table');
+            const outputDir = 'output';
+            const expectedCities = fs.readdirSync(timeTableDir).filter((f) => f.endsWith('-time.json'));
+            const timePattern = /^\d{1,2}:\d{2}\$/;
+            for (const cityFile of expectedCities) {
+              const outputPath = path.join(outputDir, cityFile);
+              if (!fs.existsSync(outputPath)) {
+                throw new Error('missing output for ' + cityFile);
+              }
+              const data = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+              const months = Object.keys(data);
+              if (months.length !== 12) {
+                throw new Error(cityFile + ': expected 12 months, got ' + months.length);
+              }
+              for (const m of months) {
+                const days = Object.keys(data[m]);
+                if (days.length < 28) {
+                  throw new Error(cityFile + ': month ' + m + ' has only ' + days.length + ' days');
+                }
+                for (const d of days) {
+                  const entry = data[m][d];
+                  for (const key of ['down', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']) {
+                    if (!timePattern.test(entry[key] || '')) {
+                      throw new Error(cityFile + ': bad time for ' + key + ' on ' + m + '/' + d);
+                    }
+                  }
+                }
+              }
+            }
+            console.log('All ' + expectedCities.length + ' city files passed validation.');
+          "
+
+      - name: Copy validated files into time-table/
+        run: cp converter/output/*-time.json time-table/
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "path-to-paradise"
+          git config user.email "path-to-paradise@users.noreply.github.com"
+          if git diff --quiet -- time-table; then
+            echo "No changes vs. what's already committed (grandmufti.bg is likely still serving last year's calendar). Nothing to do."
+            exit 0
+          fi
+          git add time-table
+          git commit -m "Update prayer time tables for $(date +%Y)"
+          git push
