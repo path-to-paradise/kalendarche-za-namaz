@@ -59,7 +59,7 @@ body {
 }
 
 .app-title {
-    font-size: clamp(1.15rem, 4.5vw, 1.6rem);
+    font-size: clamp(1.3rem, 5vw, 1.75rem);
     font-weight: 700;
     margin: 0;
     letter-spacing: 0.01em;
@@ -287,7 +287,7 @@ main#content {
 }
 
 .day-badge {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -304,7 +304,7 @@ main#content {
 
 .date {
     text-align: center;
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-size: clamp(1.2rem, 4.5vw, 1.55rem);
     font-weight: 600;
     margin: 0;
 }
@@ -334,7 +334,7 @@ main#content {
     display: flex;
     align-items: center;
     gap: 0.6em;
-    font-size: 0.98rem;
+    font-size: 1.08rem;
     font-weight: 500;
     color: var(--color-text);
 }
@@ -351,7 +351,7 @@ main#content {
 }
 
 .prayer .time {
-    font-size: 1.15rem;
+    font-size: 1.3rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--color-text);
@@ -366,7 +366,7 @@ main#content {
     border-radius: var(--radius-pill);
     background: rgba(46, 139, 87, 0.1);
     vertical-align: middle;
-    font-size: 0.62em;
+    font-size: 0.65em;
     font-weight: 700;
     letter-spacing: 0.01em;
     color: var(--color-primary-dark);
@@ -434,7 +434,7 @@ main#content {
     }
 
     .prayer .time {
-        font-size: 1.3rem;
+        font-size: 1.45rem;
     }
 }
 
@@ -465,7 +465,7 @@ main#content {
     }
 
     .date {
-        font-size: 1.05rem;
+        font-size: 1.2rem;
     }
 
     .prayer-list {
@@ -477,11 +477,11 @@ main#content {
     }
 
     .prayer .name {
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
 
     .prayer .time {
-        font-size: 1.05rem;
+        font-size: 1.2rem;
     }
 }
 
@@ -506,15 +506,15 @@ main#content {
     }
 
     .date {
-        font-size: 0.9rem;
+        font-size: 1.05rem;
     }
 
     .prayer .name {
-        font-size: 0.8rem;
+        font-size: 0.95rem;
     }
 
     .prayer .time {
-        font-size: 0.88rem;
+        font-size: 1.05rem;
     }
 }
 
