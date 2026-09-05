@@ -232,7 +232,28 @@ main#content {
     border: 1px dashed var(--color-border);
 }
 
-.prayer .name {
+.prayer-group {
+    border-radius: var(--radius-md);
+    background: var(--color-surface-alt);
+    overflow: hidden;
+}
+
+.prayer-group__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7em 1em;
+}
+
+.prayer-group__divider {
+    height: 1px;
+    margin: 0 1em;
+    background: var(--color-border);
+}
+
+.prayer .name,
+.prayer-group__row .name {
     display: flex;
     align-items: center;
     gap: 0.6em;
@@ -241,7 +262,8 @@ main#content {
     color: var(--color-text);
 }
 
-.prayer .icon {
+.prayer .icon,
+.prayer-group__row .icon {
     flex: 0 0 auto;
     width: 1.35em;
     height: 1.35em;
@@ -252,7 +274,8 @@ main#content {
     color: var(--color-muted);
 }
 
-.prayer .time {
+.prayer .time,
+.prayer-group__row .time {
     font-size: 1.15rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
@@ -305,11 +328,13 @@ main#content {
         padding: 2rem 2.25rem;
     }
 
-    .prayer {
+    .prayer,
+    .prayer-group__row {
         padding: 0.85em 1.25em;
     }
 
-    .prayer .time {
+    .prayer .time,
+    .prayer-group__row .time {
         font-size: 1.3rem;
     }
 }
@@ -348,15 +373,18 @@ main#content {
         gap: 0.3rem;
     }
 
-    .prayer {
+    .prayer,
+    .prayer-group__row {
         padding: 0.35em 0.8em;
     }
 
-    .prayer .name {
+    .prayer .name,
+    .prayer-group__row .name {
         font-size: 0.9rem;
     }
 
-    .prayer .time {
+    .prayer .time,
+    .prayer-group__row .time {
         font-size: 1.05rem;
     }
 }
@@ -377,7 +405,8 @@ main#content {
         gap: 0.12rem;
     }
 
-    .prayer {
+    .prayer,
+    .prayer-group__row {
         padding: 0.14em 0.7em;
     }
 
@@ -385,11 +414,13 @@ main#content {
         font-size: 0.9rem;
     }
 
-    .prayer .name {
+    .prayer .name,
+    .prayer-group__row .name {
         font-size: 0.8rem;
     }
 
-    .prayer .time {
+    .prayer .time,
+    .prayer-group__row .time {
         font-size: 0.88rem;
     }
 }

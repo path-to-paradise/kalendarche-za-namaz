@@ -315,13 +315,16 @@ function getPrayerTemplate(prayerTimes, fullDate) {
                     <span class="name">${PRAYER_ICONS.sunset}Акшам</span>
                     <span class="time">${maghrib}</span>
                 </div>
-                <div class="prayer">
-                    <span class="name">${PRAYER_ICONS.isha}Еция</span>
-                    <span class="time">${isha}</span>
-                </div>
-                <div class="prayer">
-                    <span class="name">${PRAYER_ICONS.witr}Витр</span>
-                    <span class="time">${witr}</span>
+                <div class="prayer-group">
+                    <div class="prayer-group__row">
+                        <span class="name">${PRAYER_ICONS.isha}Еция</span>
+                        <span class="time">${isha}</span>
+                    </div>
+                    <div class="prayer-group__divider"></div>
+                    <div class="prayer-group__row">
+                        <span class="name">${PRAYER_ICONS.witr}Витр</span>
+                        <span class="time">${witr}</span>
+                    </div>
                 </div>
                 <div class="prayer prayer--voluntary">
                     <span class="name">${PRAYER_ICONS.tehajjud}Техадж-джуд</span>
