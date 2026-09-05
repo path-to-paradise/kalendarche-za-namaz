@@ -7,6 +7,100 @@ const PRAYER_ICONS = {
     tehajjud: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 14.3A6.6 6.6 0 1 1 9 4.3a5.4 5.4 0 0 0 7.5 10Z"/><path d="M19 3v2.2M17.9 4.1h2.2M6 15.5v1.8M5.1 16.4h1.8"/></svg>'
 };
 
+// Ramadan and Eid al-Fitr (Рамазан Байрам) dates depend on moon sighting and
+// are announced by the Bulgarian Grand Mufti's office (confirmed by the
+// government) shortly before each year. Add next year's entry once it is
+// officially announced — until then the app simply stops showing a
+// Ramadan/Eid marker or countdown past the last known year.
+const RAMADAN_PERIODS = [
+    {
+        // Ramadan 1446 AH — official Bulgarian dates
+        start: new Date(2025, 2, 1),
+        end: new Date(2025, 2, 30),
+        eidStart: new Date(2025, 2, 31),
+        eidDays: 2
+    },
+    {
+        // Ramadan 1447 AH — official Bulgarian dates
+        start: new Date(2026, 1, 18),
+        end: new Date(2026, 2, 18),
+        eidStart: new Date(2026, 2, 19),
+        eidDays: 2
+    },
+    {
+        // Ramadan 1448 AH — estimated, pending official confirmation
+        start: new Date(2027, 1, 8),
+        end: new Date(2027, 2, 9),
+        eidStart: new Date(2027, 2, 10),
+        eidDays: 2
+    }
+];
+
+function getDaysBetween(fromDate, toDate) {
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+    return Math.round((toDate.getTime() - fromDate.getTime()) / oneDayInMs);
+}
+
+function getRamadanPeriod(fullDate) {
+    return RAMADAN_PERIODS.find(
+        (period) => fullDate >= period.start && fullDate <= period.end
+    );
+}
+
+function getEidInfo(fullDate) {
+    for (const period of RAMADAN_PERIODS) {
+        const dayOffset = getDaysBetween(period.eidStart, fullDate);
+        if (dayOffset >= 0 && dayOffset < period.eidDays) {
+            return { dayNumber: dayOffset + 1 };
+        }
+    }
+
+    return null;
+}
+
+function getNextRamadanStart(fullDate) {
+    const upcomingPeriods = RAMADAN_PERIODS.filter(
+        (period) => period.start > fullDate
+    ).sort((a, b) => a.start - b.start);
+
+    return upcomingPeriods.length > 0 ? upcomingPeriods[0].start : null;
+}
+
+function getRamadanBannerHtml(fullDate) {
+    const eidInfo = getEidInfo(fullDate);
+    if (eidInfo) {
+        const label =
+            eidInfo.dayNumber === 1
+                ? 'Рамазан Байрам'
+                : 'Втори ден на Рамазан Байрам';
+        return `<div class="eid-banner">${label}</div>`;
+    }
+
+    const ramadanPeriod = getRamadanPeriod(fullDate);
+    if (ramadanPeriod) {
+        const dayNumber = getDaysBetween(ramadanPeriod.start, fullDate) + 1;
+        const totalDays = getDaysBetween(ramadanPeriod.start, ramadanPeriod.end) + 1;
+
+        let label = `${dayNumber}-и ден от Рамазан`;
+        if (dayNumber === 1) {
+            label = 'Начало на Рамазан';
+        } else if (dayNumber === totalDays) {
+            label = `Последен ден от Рамазан · ${label}`;
+        }
+
+        return `<div class="ramadan-banner">${label}</div>`;
+    }
+
+    const nextRamadanStart = getNextRamadanStart(fullDate);
+    if (nextRamadanStart) {
+        const daysUntilRamadan = getDaysBetween(fullDate, nextRamadanStart);
+        const daysLabel = daysUntilRamadan === 1 ? 'ден' : 'дни';
+        return `<div class="ramadan-countdown">${daysUntilRamadan} ${daysLabel} до Рамазан</div>`;
+    }
+
+    return '';
+}
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
         .register('/service-worker.js')
@@ -57,17 +151,12 @@ async function changeTimeToSelectedCity(event, swiperInstance) {
 function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
     let currentFullDate = new Date();
     currentFullDate.setHours(0, 0, 0, 0);
-
-    const previousYear = currentFullDate.getFullYear() - 1;
-    const nextYear = currentFullDate.getFullYear() + 1;
-
     currentFullDate.setDate(currentFullDate.getDate() - 1);
 
-    if (currentFullDate.getFullYear() === previousYear) {
-        currentFullDate.setDate(currentFullDate.getDate() + 1);
-    }
+    const oneYearFromNow = new Date(currentFullDate);
+    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
 
-    while (currentFullDate.getFullYear() !== nextYear) {
+    while (currentFullDate < oneYearFromNow) {
         // Month is zero-indexed so we have to add 1 to get the current month
         // For example: January is 0, February is 1, etc.
         const currentMonth = currentFullDate.getMonth() + 1;
@@ -172,30 +261,6 @@ function isYesterday(dateToBeCompared) {
     return false;
 }
 
-function calculateRamadanDayNumber(ramadanStartDate, currentlyDisplayingDate) {
-    const ramadanStartDateAsDate = new Date(ramadanStartDate);
-    const ramadanEndDateAsDate = new Date(ramadanStartDateAsDate);
-    ramadanEndDateAsDate.setDate(ramadanStartDateAsDate.getDate() + 31);
-
-    const differenceInMilliseconds = currentlyDisplayingDate.getTime() - ramadanStartDateAsDate.getTime();
-    const oneDay = 1000 * 60 * 60 *24;
-    const daysSinceStartOfRamadan = Math.floor(differenceInMilliseconds / oneDay);
-
-    return daysSinceStartOfRamadan;
-}
-
-function isRamadan(ramadanStartDate, currentlyDisplayingDate) {
-    const ramadanStartDateAsDate = new Date(ramadanStartDate);
-    const ramadanEndDateAsDate = new Date(ramadanStartDateAsDate);
-    ramadanEndDateAsDate.setDate(ramadanStartDateAsDate.getDate() + 30);
-
-    if(ramadanEndDateAsDate.getTime() >= currentlyDisplayingDate.getTime() && ramadanStartDateAsDate.getTime() <= currentlyDisplayingDate.getTime()) {
-        return true;
-    }
-
-    return false;
-}
-
 function getPrayerTemplate(prayerTimes, fullDate) {
     const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
 
@@ -210,14 +275,7 @@ function getPrayerTemplate(prayerTimes, fullDate) {
         dayBadge = '<span class="day-badge">Вчера</span>';
     }
 
-    const ramadanStartDate = '28/02/2025';
-    const isRamadanMonthNow = isRamadan(ramadanStartDate, fullDate);
-    const ramadanBanner = isRamadanMonthNow
-        ? `<div class="ramadan-banner">${calculateRamadanDayNumber(
-              ramadanStartDate,
-              fullDate
-          )}-и ден от Рамадан</div>`
-        : '';
+    const ramadanBanner = getRamadanBannerHtml(fullDate);
 
     const isFriday = fullDate.getDay() === 5;
 

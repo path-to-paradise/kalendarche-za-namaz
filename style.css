@@ -177,6 +177,26 @@ main#content {
     background: linear-gradient(90deg, #30d081, #cfd030);
 }
 
+.eid-banner {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    padding: 0.5em 1em;
+    border-radius: var(--radius-pill);
+    margin-bottom: 1rem;
+    color: #5c4200;
+    background: linear-gradient(90deg, #ffd76a, #ffb454);
+}
+
+.ramadan-countdown {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+}
+
 .date-heading {
     display: flex;
     flex-direction: column;
