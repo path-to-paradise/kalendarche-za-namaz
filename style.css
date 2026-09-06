@@ -54,6 +54,36 @@
     --color-primary-rgb: 217, 119, 6;
 }
 
+:root[data-color-theme='rose'] {
+    --color-primary: #e11d48;
+    --color-primary-dark: #be123c;
+    --color-primary-rgb: 225, 29, 72;
+}
+
+:root[data-color-theme='indigo'] {
+    --color-primary: #4f46e5;
+    --color-primary-dark: #4338ca;
+    --color-primary-rgb: 79, 70, 229;
+}
+
+:root[data-color-theme='sky'] {
+    --color-primary: #0284c7;
+    --color-primary-dark: #0369a1;
+    --color-primary-rgb: 2, 132, 199;
+}
+
+:root[data-color-theme='orange'] {
+    --color-primary: #ea580c;
+    --color-primary-dark: #c2410c;
+    --color-primary-rgb: 234, 88, 12;
+}
+
+:root[data-color-theme='pink'] {
+    --color-primary: #db2777;
+    --color-primary-dark: #be185d;
+    --color-primary-rgb: 219, 39, 119;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -315,6 +345,7 @@ body {
 
 .color-swatches {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.6rem;
 }
 
@@ -658,7 +689,10 @@ main#content {
 }
 
 .prayer--jumah {
-    background: var(--color-primary);
+    background:
+        radial-gradient(circle at 85% -40%, rgba(255, 255, 255, 0.25), transparent 60%),
+        linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    box-shadow: 0 6px 16px rgba(var(--color-primary-rgb), 0.35);
 }
 
 .prayer--jumah .name,
