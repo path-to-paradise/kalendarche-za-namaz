@@ -487,8 +487,8 @@ main#content {
        instead of scrollable, which is a smaller problem than breaking
        the app's core swipe-to-change-day gesture. */
     touch-action: pan-x;
-    padding: clamp(1rem, 4vw, 2rem) clamp(0.85rem, 4vw, 1.75rem)
-        calc(clamp(1rem, 4vw, 2rem) + var(--safe-bottom));
+    padding: clamp(14px, 4vw, 28px) clamp(12px, 4vw, 24px)
+        calc(clamp(14px, 4vw, 28px) + var(--safe-bottom));
 }
 
 .day-card {
@@ -498,18 +498,26 @@ main#content {
     background: var(--color-surface);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-elevated);
-    padding: clamp(1.1rem, 4vw, 1.75rem);
+    /* Fixed px, not rem: this card has no scroll fallback (see
+       .swiper-slide), so its total height must be predictable from
+       the actual viewport size alone. rem-based sizing here would
+       grow with the OS/browser accessibility text-size setting
+       without the viewport growing to match, silently clipping
+       prayer times off the bottom on devices/settings that scale
+       text more than what was tested here. The same reasoning
+       applies to every other px value in this file within .day-card. */
+    padding: clamp(14px, 4vw, 24px);
 }
 
 .ramadan-banner {
     text-align: center;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 13px;
     letter-spacing: 0.04em;
     padding: 0.5em 1em;
     border-radius: var(--radius-pill);
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
     color: #fff;
     background: linear-gradient(90deg, #30d081, #cfd030);
 }
@@ -518,11 +526,11 @@ main#content {
     text-align: center;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 13px;
     letter-spacing: 0.04em;
     padding: 0.5em 1em;
     border-radius: var(--radius-pill);
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
     color: #5c4200;
     background: linear-gradient(90deg, #ffd76a, #ffb454);
 }
@@ -531,12 +539,12 @@ main#content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.4rem;
-    margin-bottom: 1.1rem;
+    gap: 6px;
+    margin-bottom: 16px;
 }
 
 .day-badge {
-    font-size: 0.8rem;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -553,7 +561,7 @@ main#content {
 
 .date {
     text-align: center;
-    font-size: clamp(1.2rem, 4.5vw, 1.55rem);
+    font-size: clamp(19px, 4.5vw, 25px);
     font-weight: 600;
     margin: 0;
 }
@@ -561,15 +569,17 @@ main#content {
 .prayer-list {
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 9px;
 }
 
 .prayer {
     position: relative;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
+    column-gap: 12px;
+    row-gap: 0.3em;
     padding: 0.6em 1em;
     border-radius: var(--radius-md);
     background: var(--color-surface-alt);
@@ -585,9 +595,10 @@ main#content {
     display: flex;
     align-items: center;
     gap: 0.6em;
-    font-size: 1.08rem;
+    font-size: 17px;
     font-weight: 500;
     color: var(--color-text);
+    white-space: nowrap;
 }
 
 .icon-badge {
@@ -621,10 +632,12 @@ main#content {
 }
 
 .prayer .time {
-    font-size: 1.3rem;
+    font-size: 21px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--color-text);
+    white-space: nowrap;
+    margin-left: auto;
 }
 
 .time-end {
@@ -672,7 +685,7 @@ main#content {
     border-radius: var(--radius-pill);
     background: var(--color-primary);
     color: #fff;
-    font-size: 0.68rem;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -729,7 +742,7 @@ main#content {
 @media (min-width: 640px) {
     .day-card {
         max-width: 520px;
-        padding: 2rem 2.25rem;
+        padding: 32px 36px;
     }
 
     .prayer {
@@ -737,7 +750,7 @@ main#content {
     }
 
     .prayer .time {
-        font-size: 1.45rem;
+        font-size: 23px;
     }
 }
 
@@ -759,20 +772,20 @@ main#content {
     }
 
     .day-card {
-        padding: 0.5rem 0.85rem;
+        padding: 8px 14px;
     }
 
     .date-heading {
-        gap: 0.25rem;
-        margin-bottom: 0.3rem;
+        gap: 4px;
+        margin-bottom: 5px;
     }
 
     .date {
-        font-size: 1.2rem;
+        font-size: 19px;
     }
 
     .prayer-list {
-        gap: 0.22rem;
+        gap: 4px;
     }
 
     .prayer {
@@ -780,11 +793,11 @@ main#content {
     }
 
     .prayer .name {
-        font-size: 1rem;
+        font-size: 16px;
     }
 
     .prayer .time {
-        font-size: 1.2rem;
+        font-size: 19px;
     }
 
     .icon-badge {
@@ -796,18 +809,18 @@ main#content {
 
 @media (max-height: 480px) {
     .day-card {
-        padding: 0.4rem 0.75rem;
+        padding: 6px 12px;
     }
 
     .date-heading {
         flex-direction: row;
         justify-content: center;
-        gap: 0.5rem;
-        margin-bottom: 0.2rem;
+        gap: 8px;
+        margin-bottom: 3px;
     }
 
     .prayer-list {
-        gap: 0.12rem;
+        gap: 2px;
     }
 
     .prayer {
@@ -815,15 +828,15 @@ main#content {
     }
 
     .date {
-        font-size: 1.05rem;
+        font-size: 17px;
     }
 
     .prayer .name {
-        font-size: 0.95rem;
+        font-size: 15px;
     }
 
     .prayer .time {
-        font-size: 1.05rem;
+        font-size: 17px;
     }
 
     .icon-badge {
