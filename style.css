@@ -473,14 +473,19 @@ main#content {
 
 .swiper-slide {
     display: flex;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    /* Swiper's own container sets touch-action: pan-x so vertical drags
-       go through its JS swipe handling instead of native scrolling.
-       Without this, a slide that overflows (common on Android, where
-       the viewport height shifts as the URL bar shows/hides) opts
-       itself back into native touch scrolling, which wins over Swiper
-       and makes it impossible to swipe to the next day. */
+    overflow: hidden;
+    /* Slides are intentionally NOT scrollable. A slide that both
+       swipes (to change day) and scrolls (its own overflowing content)
+       on the same vertical axis creates a real conflict: even with
+       touch-action stopping the browser from taking the gesture,
+       Swiper's own nested-scroll handling still tries to hand off
+       partial control to the "scrollable" content, and the gesture
+       ends up half-recognized by both systems and fully completed by
+       neither (a swipe that only moves a few px and snaps back). The
+       layout is tuned so a day's content fits without scrolling; if
+       some content doesn't fit in an edge case, it gets clipped
+       instead of scrollable, which is a smaller problem than breaking
+       the app's core swipe-to-change-day gesture. */
     touch-action: pan-x;
     padding: clamp(1rem, 4vw, 2rem) clamp(0.85rem, 4vw, 1.75rem)
         calc(clamp(1rem, 4vw, 2rem) + var(--safe-bottom));
