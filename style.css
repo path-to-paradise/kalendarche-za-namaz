@@ -355,33 +355,28 @@ main#content {
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     background: var(--color-bg);
 }
 
 .today-button {
-    position: absolute;
-    left: 50%;
-    bottom: calc(1.1rem + var(--safe-bottom));
-    transform: translateX(-50%);
-    z-index: 10;
-    display: inline-flex;
+    flex: 0 0 auto;
+    width: 100%;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.45em;
-    padding: 0.65em 1.3em;
+    padding: 0.7em 1em;
     border: none;
-    border-radius: var(--radius-pill);
     background: var(--color-primary);
     color: #fff;
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 700;
-    box-shadow: var(--shadow-elevated);
+    box-shadow: 0 2px 8px rgba(15, 40, 25, 0.15);
     cursor: pointer;
     touch-action: manipulation;
-    transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
 }
 
 .today-button[hidden] {
@@ -395,7 +390,7 @@ main#content {
 }
 
 .today-button:active {
-    transform: translateX(-50%) scale(0.96);
+    background: var(--color-primary-dark);
 }
 
 .cookie-banner {
@@ -466,9 +461,10 @@ main#content {
 }
 
 .swiper {
+    flex: 1 1 auto;
+    min-height: 0;
     width: 100%;
     max-width: 640px;
-    height: 100%;
 }
 
 .swiper-slide {
