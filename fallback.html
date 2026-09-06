@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Календар за намаз</title>
+        <title data-i18n-bg="Календар за намаз" data-i18n-en="Prayer Times Calendar">Календар за намаз</title>
         <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
         <script>
             (function () {
@@ -23,6 +23,23 @@
                         colorTheme
                     );
                 }
+
+                // This offline page doesn't run the main app.js translation
+                // logic, so it carries its own tiny bg/en text lookup.
+                var language = localStorage.getItem('appLanguage') || 'bg';
+                document.documentElement.setAttribute('lang', language);
+                document.addEventListener('DOMContentLoaded', function () {
+                    document
+                        .querySelectorAll('[data-i18n-bg]')
+                        .forEach(function (el) {
+                            var text = el.getAttribute(
+                                language === 'en' ? 'data-i18n-en' : 'data-i18n-bg'
+                            );
+                            if (text) {
+                                el.textContent = text;
+                            }
+                        });
+                });
             })();
         </script>
         <link rel="stylesheet" href="./style.css" />
@@ -37,16 +54,34 @@
     <body>
         <div class="app-shell">
             <header class="header">
-                <h1 class="app-title">Времето за намаз</h1>
+                <h1
+                    class="app-title"
+                    data-i18n-bg="Времето за намаз"
+                    data-i18n-en="Prayer Times"
+                >
+                    Времето за намаз
+                </h1>
             </header>
             <main id="content" class="fallback-content">
                 <div class="day-card fallback-card">
-                    <h2 class="date">Оппа!</h2>
-                    <p>
+                    <h2 class="date" data-i18n-bg="Оппа!" data-i18n-en="Oops!">
+                        Оппа!
+                    </h2>
+                    <p
+                        data-i18n-bg="За съжаление не можете да видите тази страницата, защото нямате интернет"
+                        data-i18n-en="Sorry, you can't see this page because you have no internet connection"
+                    >
                         За съжаление не можете да видите тази страницата,
                         защото нямате интернет
                     </p>
-                    <a class="back-link" href="/">Върнете се обратно</a>
+                    <a
+                        class="back-link"
+                        href="/"
+                        data-i18n-bg="Върнете се обратно"
+                        data-i18n-en="Go back"
+                    >
+                        Върнете се обратно
+                    </a>
                 </div>
             </main>
         </div>

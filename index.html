@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Календар за намаз 2025</title>
+        <title data-i18n="pageTitle">Календар за намаз 2025</title>
         <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
         <script>
             (function () {
@@ -23,6 +23,9 @@
                         colorTheme
                     );
                 }
+
+                var language = localStorage.getItem('appLanguage') || 'bg';
+                document.documentElement.setAttribute('lang', language);
             })();
         </script>
         <link rel="stylesheet" href="./style.css" />
@@ -41,6 +44,7 @@
                     id="settings-button"
                     class="settings-button"
                     type="button"
+                    data-i18n-aria="settingsAriaLabel"
                     aria-label="Настройки"
                 >
                     <svg
@@ -58,7 +62,7 @@
                         />
                     </svg>
                 </button>
-                <h1 class="app-title">Времето за намаз</h1>
+                <h1 class="app-title" data-i18n="appTitle">Времето за намаз</h1>
                 <div class="city-select-wrapper">
                     <select name="city" id="selected-city" class="city-select">
                         <option value="aytos">Айтос</option>
@@ -115,6 +119,7 @@
                     id="today-button"
                     class="today-button"
                     type="button"
+                    data-i18n="todayButton"
                     hidden
                 >
                     Върни се към днес
@@ -137,7 +142,7 @@
                         <path d="M12 3v12M7 10l5 5 5-5" />
                         <path d="M4 18v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2" />
                     </svg>
-                    Инсталирай
+                    <span data-i18n="installButton">Инсталирай</span>
                 </button>
             </header>
             <div id="ios-install-instructions" class="modal" hidden>
@@ -145,15 +150,16 @@
                     <button
                         class="modal__close"
                         type="button"
+                        data-i18n-aria="closeAriaLabel"
                         aria-label="Затвори"
                     >
                         &times;
                     </button>
-                    <h3>Инсталиране на iPhone</h3>
+                    <h3 data-i18n="iosInstallTitle">Инсталиране на iPhone</h3>
                     <ol>
                         <li>
-                            Натиснете бутона
-                            <strong>Споделяне</strong>
+                            <span data-i18n="iosStep1Pre">Натиснете бутона</span>
+                            <strong data-i18n="iosShareWord">Споделяне</strong>
                             <svg
                                 class="share-icon"
                                 viewBox="0 0 24 24"
@@ -169,16 +175,16 @@
                                     d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"
                                 />
                             </svg>
-                            в лентата на Safari.
+                            <span data-i18n="iosStep1Post">в лентата на Safari.</span>
                         </li>
                         <li>
-                            Превъртете надолу и изберете
-                            <strong>„Добави към начален екран“</strong>.
+                            <span data-i18n="iosStep2Pre">Превъртете надолу и изберете</span>
+                            <strong data-i18n="iosAddToHomeScreen">„Добави към начален екран“</strong>.
                         </li>
                         <li>
-                            Натиснете
-                            <strong>„Добави“</strong>
-                            горе вдясно.
+                            <span data-i18n="iosStep3Pre">Натиснете</span>
+                            <strong data-i18n="iosAddWord">„Добави“</strong>
+                            <span data-i18n="iosStep3Post">горе вдясно.</span>
                         </li>
                     </ol>
                 </div>
@@ -188,18 +194,20 @@
                     <button
                         class="modal__close"
                         type="button"
+                        data-i18n-aria="closeAriaLabel"
                         aria-label="Затвори"
                     >
                         &times;
                     </button>
-                    <h3>Настройки</h3>
+                    <h3 data-i18n="settingsTitle">Настройки</h3>
 
-                    <p class="settings-section-label">Тема</p>
+                    <p class="settings-section-label" data-i18n="themeLabel">Тема</p>
                     <div class="theme-toggle" role="group" aria-label="Тема">
                         <button
                             type="button"
                             class="theme-toggle__option"
                             data-theme-mode="light"
+                            data-i18n="themeLight"
                         >
                             Светла
                         </button>
@@ -207,6 +215,7 @@
                             type="button"
                             class="theme-toggle__option"
                             data-theme-mode="dark"
+                            data-i18n="themeDark"
                         >
                             Тъмна
                         </button>
@@ -214,12 +223,13 @@
                             type="button"
                             class="theme-toggle__option"
                             data-theme-mode="system"
+                            data-i18n="themeSystem"
                         >
                             Системна
                         </button>
                     </div>
 
-                    <p class="settings-section-label">Цвят</p>
+                    <p class="settings-section-label" data-i18n="colorLabel">Цвят</p>
                     <div
                         class="color-swatches"
                         role="group"
@@ -230,6 +240,7 @@
                             class="color-swatch"
                             data-color-theme-option="green"
                             style="--swatch-color: #2e8b57"
+                            data-i18n-aria="colorGreen"
                             aria-label="Зелен"
                         ></button>
                         <button
@@ -237,6 +248,7 @@
                             class="color-swatch"
                             data-color-theme-option="blue"
                             style="--swatch-color: #2563eb"
+                            data-i18n-aria="colorBlue"
                             aria-label="Син"
                         ></button>
                         <button
@@ -244,6 +256,7 @@
                             class="color-swatch"
                             data-color-theme-option="teal"
                             style="--swatch-color: #0d9488"
+                            data-i18n-aria="colorTeal"
                             aria-label="Тюркоазен"
                         ></button>
                         <button
@@ -251,6 +264,7 @@
                             class="color-swatch"
                             data-color-theme-option="purple"
                             style="--swatch-color: #7c3aed"
+                            data-i18n-aria="colorPurple"
                             aria-label="Лилав"
                         ></button>
                         <button
@@ -258,6 +272,7 @@
                             class="color-swatch"
                             data-color-theme-option="amber"
                             style="--swatch-color: #d97706"
+                            data-i18n-aria="colorAmber"
                             aria-label="Кехлибарен"
                         ></button>
                         <button
@@ -265,6 +280,7 @@
                             class="color-swatch"
                             data-color-theme-option="rose"
                             style="--swatch-color: #e11d48"
+                            data-i18n-aria="colorRose"
                             aria-label="Розов"
                         ></button>
                         <button
@@ -272,6 +288,7 @@
                             class="color-swatch"
                             data-color-theme-option="indigo"
                             style="--swatch-color: #4f46e5"
+                            data-i18n-aria="colorIndigo"
                             aria-label="Индиго"
                         ></button>
                         <button
@@ -279,6 +296,7 @@
                             class="color-swatch"
                             data-color-theme-option="sky"
                             style="--swatch-color: #0284c7"
+                            data-i18n-aria="colorSky"
                             aria-label="Небесносин"
                         ></button>
                         <button
@@ -286,6 +304,7 @@
                             class="color-swatch"
                             data-color-theme-option="orange"
                             style="--swatch-color: #ea580c"
+                            data-i18n-aria="colorOrange"
                             aria-label="Оранжев"
                         ></button>
                         <button
@@ -293,11 +312,12 @@
                             class="color-swatch"
                             data-color-theme-option="pink"
                             style="--swatch-color: #db2777"
+                            data-i18n-aria="colorPink"
                             aria-label="Розово-лилав"
                         ></button>
                     </div>
 
-                    <p class="settings-section-label">Имена на молитвите</p>
+                    <p class="settings-section-label" data-i18n="prayerNamesLabel">Имена на молитвите</p>
                     <div
                         class="theme-toggle"
                         role="group"
@@ -307,6 +327,7 @@
                             type="button"
                             class="theme-toggle__option"
                             data-prayer-name-style="default"
+                            data-i18n="styleDefault"
                         >
                             По подразбиране
                         </button>
@@ -314,6 +335,7 @@
                             type="button"
                             class="theme-toggle__option"
                             data-prayer-name-style="arabic"
+                            data-i18n="styleArabic"
                         >
                             Арабски
                         </button>
@@ -321,8 +343,27 @@
                             type="button"
                             class="theme-toggle__option"
                             data-prayer-name-style="descriptive"
+                            data-i18n="styleDescriptive"
                         >
                             Описателен
+                        </button>
+                    </div>
+
+                    <p class="settings-section-label" data-i18n="languageLabel">Език</p>
+                    <div class="theme-toggle" role="group" aria-label="Език">
+                        <button
+                            type="button"
+                            class="theme-toggle__option"
+                            data-language="bg"
+                        >
+                            Български
+                        </button>
+                        <button
+                            type="button"
+                            class="theme-toggle__option"
+                            data-language="en"
+                        >
+                            English
                         </button>
                     </div>
                 </div>
@@ -339,7 +380,7 @@
             </main>
         </div>
         <div id="cookie-banner" class="cookie-banner" hidden>
-            <p class="cookie-banner__text">
+            <p class="cookie-banner__text" data-i18n="cookieText">
                 Този сайт използва бисквитки за анализ на посещаемостта
                 (Google Analytics), за да можем да подобряваме
                 приложението.
@@ -349,6 +390,7 @@
                     id="cookie-decline"
                     type="button"
                     class="cookie-banner__button cookie-banner__button--ghost"
+                    data-i18n="cookieDecline"
                 >
                     Отказвам
                 </button>
@@ -356,6 +398,7 @@
                     id="cookie-accept"
                     type="button"
                     class="cookie-banner__button"
+                    data-i18n="cookieAccept"
                 >
                     Приемам
                 </button>

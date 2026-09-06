@@ -8,42 +8,221 @@ const PRAYER_ICONS = {
     tehajjud: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 14.3A6.6 6.6 0 1 1 9 4.3a5.4 5.4 0 0 0 7.5 10Z"/><path d="M19 3v2.2M17.9 4.1h2.2M6 15.5v1.8M5.1 16.4h1.8"/></svg>'
 };
 
-// Three sets of Bulgarian labels for the same 8 daily rows, so users can
-// pick whichever naming convention their mosque/community uses. Jumah
-// always overrides the Dhuhr label on Fridays, regardless of style.
+const LANGUAGE_STORAGE_KEY = 'appLanguage';
+
+function getLanguage() {
+    return localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'bg';
+}
+
+// All translatable UI text, keyed by the two supported languages. Static
+// markup is translated by applyTranslations() via data-i18n attributes;
+// text built dynamically in JS (dates, badges, banners) reads from here
+// directly through getStrings().
+const STRINGS = {
+    bg: {
+        pageTitle: 'Календар за намаз 2025',
+        appTitle: 'Времето за намаз',
+        settingsAriaLabel: 'Настройки',
+        todayButton: 'Върни се към днес',
+        installButton: 'Инсталирай',
+        closeAriaLabel: 'Затвори',
+        iosInstallTitle: 'Инсталиране на iPhone',
+        iosStep1Pre: 'Натиснете бутона',
+        iosShareWord: 'Споделяне',
+        iosStep1Post: 'в лентата на Safari.',
+        iosStep2Pre: 'Превъртете надолу и изберете',
+        iosAddToHomeScreen: '„Добави към начален екран“',
+        iosStep3Pre: 'Натиснете',
+        iosAddWord: '„Добави“',
+        iosStep3Post: 'горе вдясно.',
+        settingsTitle: 'Настройки',
+        themeLabel: 'Тема',
+        themeLight: 'Светла',
+        themeDark: 'Тъмна',
+        themeSystem: 'Системна',
+        colorLabel: 'Цвят',
+        colorGreen: 'Зелен',
+        colorBlue: 'Син',
+        colorTeal: 'Тюркоазен',
+        colorPurple: 'Лилав',
+        colorAmber: 'Кехлибарен',
+        colorRose: 'Розов',
+        colorIndigo: 'Индиго',
+        colorSky: 'Небесносин',
+        colorOrange: 'Оранжев',
+        colorPink: 'Розово-лилав',
+        prayerNamesLabel: 'Имена на молитвите',
+        styleDefault: 'По подразбиране',
+        styleArabic: 'Арабски',
+        styleDescriptive: 'Описателен',
+        languageLabel: 'Език',
+        cookieText:
+            'Този сайт използва бисквитки за анализ на посещаемостта (Google Analytics), за да можем да подобряваме приложението.',
+        cookieDecline: 'Отказвам',
+        cookieAccept: 'Приемам',
+        dayToday: 'Днес',
+        dayYesterday: 'Вчера',
+        dayTomorrow: 'Утре',
+        nowBadge: 'сега',
+        eidDay1: 'Рамазан Байрам',
+        eidDay2: 'Втори ден на Рамазан Байрам',
+        ramadanStart: 'Начало на Рамазан',
+        ramadanDay: (n) => `${n}-и ден от Рамазан`,
+        ramadanLastDayPrefix: 'Последен ден от Рамазан · ',
+        dateLocale: 'bg'
+    },
+    en: {
+        pageTitle: 'Prayer Times Calendar 2025',
+        appTitle: 'Prayer Times',
+        settingsAriaLabel: 'Settings',
+        todayButton: 'Back to today',
+        installButton: 'Install',
+        closeAriaLabel: 'Close',
+        iosInstallTitle: 'Install on iPhone',
+        iosStep1Pre: 'Tap the',
+        iosShareWord: 'Share',
+        iosStep1Post: 'button in the Safari toolbar.',
+        iosStep2Pre: 'Scroll down and select',
+        iosAddToHomeScreen: '"Add to Home Screen"',
+        iosStep3Pre: 'Tap',
+        iosAddWord: '"Add"',
+        iosStep3Post: 'in the top right corner.',
+        settingsTitle: 'Settings',
+        themeLabel: 'Theme',
+        themeLight: 'Light',
+        themeDark: 'Dark',
+        themeSystem: 'System',
+        colorLabel: 'Color',
+        colorGreen: 'Green',
+        colorBlue: 'Blue',
+        colorTeal: 'Teal',
+        colorPurple: 'Purple',
+        colorAmber: 'Amber',
+        colorRose: 'Rose',
+        colorIndigo: 'Indigo',
+        colorSky: 'Sky',
+        colorOrange: 'Orange',
+        colorPink: 'Pink',
+        prayerNamesLabel: 'Prayer names',
+        styleDefault: 'Default',
+        styleArabic: 'Arabic',
+        styleDescriptive: 'Descriptive',
+        languageLabel: 'Language',
+        cookieText:
+            'This site uses cookies for traffic analysis (Google Analytics) to help us keep improving the app.',
+        cookieDecline: 'Decline',
+        cookieAccept: 'Accept',
+        dayToday: 'Today',
+        dayYesterday: 'Yesterday',
+        dayTomorrow: 'Tomorrow',
+        nowBadge: 'now',
+        eidDay1: 'Eid al-Fitr',
+        eidDay2: 'Second day of Eid al-Fitr',
+        ramadanStart: 'Start of Ramadan',
+        ramadanDay: (n) => `Day ${n} of Ramadan`,
+        ramadanLastDayPrefix: 'Last day of Ramadan · ',
+        dateLocale: 'en-GB'
+    }
+};
+
+function getStrings() {
+    return STRINGS[getLanguage()] || STRINGS.bg;
+}
+
+function applyTranslations() {
+    const lang = getLanguage();
+    const strings = STRINGS[lang] || STRINGS.bg;
+
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.dataset.i18n;
+        if (strings[key] !== undefined) {
+            el.textContent = strings[key];
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
+        const key = el.dataset.i18nAria;
+        if (strings[key] !== undefined) {
+            el.setAttribute('aria-label', strings[key]);
+        }
+    });
+}
+
+// Three sets of prayer-row labels per language, so users can pick
+// whichever naming convention their mosque/community uses. Jumah always
+// overrides the Dhuhr label on Fridays, regardless of style or language.
 const PRAYER_NAME_STYLES = {
-    default: {
-        fajr: 'Сабах',
-        sunrise: 'Изгрев',
-        duha: 'Духа',
-        dhuhr: 'Пладнина',
-        jumah: 'Джумая',
-        asr: 'Икинди',
-        maghrib: 'Акшам',
-        isha: 'Еция / Витр',
-        tahajjud: 'Техадж-джуд'
+    bg: {
+        default: {
+            fajr: 'Сабах',
+            sunrise: 'Изгрев',
+            duha: 'Духа',
+            dhuhr: 'Пладнина',
+            jumah: 'Джумая',
+            asr: 'Икинди',
+            maghrib: 'Акшам',
+            isha: 'Еция / Витр',
+            tahajjud: 'Техадж-джуд'
+        },
+        arabic: {
+            fajr: 'Феджър',
+            sunrise: 'Изгрев',
+            duha: 'Духа',
+            dhuhr: 'Зухур',
+            jumah: 'Джумая',
+            asr: 'Асър',
+            maghrib: 'Магриб',
+            isha: 'Иша / Витр',
+            tahajjud: 'Тахаджуд'
+        },
+        descriptive: {
+            fajr: 'Зора',
+            sunrise: 'Изгрев',
+            duha: 'Духа',
+            dhuhr: 'Обяд',
+            jumah: 'Джумая',
+            asr: 'Следобяд',
+            maghrib: 'Залез',
+            isha: 'Нощ / Витр',
+            tahajjud: 'Тахаджуд'
+        }
     },
-    arabic: {
-        fajr: 'Феджър',
-        sunrise: 'Изгрев',
-        duha: 'Духа',
-        dhuhr: 'Зухур',
-        jumah: 'Джумая',
-        asr: 'Асър',
-        maghrib: 'Магриб',
-        isha: 'Иша / Витр',
-        tahajjud: 'Тахаджуд'
-    },
-    descriptive: {
-        fajr: 'Зора',
-        sunrise: 'Изгрев',
-        duha: 'Духа',
-        dhuhr: 'Обяд',
-        jumah: 'Джумая',
-        asr: 'Следобяд',
-        maghrib: 'Залез',
-        isha: 'Нощ / Витр',
-        tahajjud: 'Тахаджуд'
+    en: {
+        default: {
+            fajr: 'Fajr',
+            sunrise: 'Sunrise',
+            duha: 'Duha',
+            dhuhr: 'Dhuhr',
+            jumah: 'Jumah',
+            asr: 'Asr',
+            maghrib: 'Maghrib',
+            isha: 'Isha / Witr',
+            tahajjud: 'Tahajjud'
+        },
+        arabic: {
+            fajr: 'Fajr',
+            sunrise: 'Sunrise',
+            duha: 'Duha',
+            dhuhr: 'Dhuhr',
+            jumah: 'Jumah',
+            asr: 'Asr',
+            maghrib: 'Maghrib',
+            isha: 'Isha / Witr',
+            tahajjud: 'Tahajjud'
+        },
+        descriptive: {
+            fajr: 'Dawn',
+            sunrise: 'Sunrise',
+            duha: 'Duha',
+            dhuhr: 'Noon',
+            jumah: 'Jumah',
+            asr: 'Afternoon',
+            maghrib: 'Sunset',
+            isha: 'Night / Witr',
+            tahajjud: 'Tahajjud'
+        }
     }
 };
 
@@ -51,7 +230,8 @@ const PRAYER_NAME_STYLE_STORAGE_KEY = 'prayerNameStyle';
 
 function getActivePrayerNames() {
     const style = localStorage.getItem(PRAYER_NAME_STYLE_STORAGE_KEY);
-    return PRAYER_NAME_STYLES[style] || PRAYER_NAME_STYLES.default;
+    const stylesForLanguage = PRAYER_NAME_STYLES[getLanguage()] || PRAYER_NAME_STYLES.bg;
+    return stylesForLanguage[style] || stylesForLanguage.default;
 }
 
 // Ramadan and Eid al-Fitr (Рамазан Байрам) dates depend on moon sighting and
@@ -106,12 +286,12 @@ function getEidInfo(fullDate) {
 }
 
 function getRamadanBannerHtml(fullDate) {
+    const strings = getStrings();
+
     const eidInfo = getEidInfo(fullDate);
     if (eidInfo) {
         const label =
-            eidInfo.dayNumber === 1
-                ? 'Рамазан Байрам'
-                : 'Втори ден на Рамазан Байрам';
+            eidInfo.dayNumber === 1 ? strings.eidDay1 : strings.eidDay2;
         return `<div class="eid-banner">${label}</div>`;
     }
 
@@ -120,11 +300,11 @@ function getRamadanBannerHtml(fullDate) {
         const dayNumber = getDaysBetween(ramadanPeriod.start, fullDate) + 1;
         const totalDays = getDaysBetween(ramadanPeriod.start, ramadanPeriod.end) + 1;
 
-        let label = `${dayNumber}-и ден от Рамазан`;
+        let label = strings.ramadanDay(dayNumber);
         if (dayNumber === 1) {
-            label = 'Начало на Рамазан';
+            label = strings.ramadanStart;
         } else if (dayNumber === totalDays) {
-            label = `Последен ден от Рамазан · ${label}`;
+            label = `${strings.ramadanLastDayPrefix}${label}`;
         }
 
         return `<div class="ramadan-banner">${label}</div>`;
@@ -330,6 +510,34 @@ function setupPrayerNameStyleSettings(swiperInstance) {
     });
 }
 
+function setupLanguageSettings(swiperInstance) {
+    const settingsModal = document.querySelector('#settings-modal');
+    const languageButtons = settingsModal?.querySelectorAll('[data-language]');
+
+    let language = getLanguage();
+
+    const updateActiveButtons = () => {
+        languageButtons?.forEach((button) => {
+            button.classList.toggle(
+                'is-active',
+                button.dataset.language === language
+            );
+        });
+    };
+
+    updateActiveButtons();
+
+    languageButtons?.forEach((button) => {
+        button.addEventListener('click', () => {
+            language = button.dataset.language;
+            localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+            applyTranslations();
+            updateActiveButtons();
+            rerenderSlides(swiperInstance);
+        });
+    });
+}
+
 const GA_MEASUREMENT_ID = 'G-NPSE0CR3QK';
 const COOKIE_CONSENT_STORAGE_KEY = 'cookieConsent';
 
@@ -380,6 +588,7 @@ function setupCookieConsent() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    applyTranslations();
     setupInstallPrompt();
     setupThemeSettings();
     setupCookieConsent();
@@ -418,6 +627,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         changeTimeToSelectedCity(event, swiperInstance)
     );
     setupPrayerNameStyleSettings(swiperInstance);
+    setupLanguageSettings(swiperInstance);
     renderPrayerSlides(currentPrayerTimeTable, swiperInstance);
 
     setInterval(updateCurrentPrayerHighlight, 30000);
@@ -642,8 +852,6 @@ function getIntervalAttrs(startDate, endDate) {
     return ` data-start="${startDate.toISOString()}" data-end="${endDate.toISOString()}"`;
 }
 
-const NOW_BADGE_HTML = '<span class="now-badge">сега</span>';
-
 function getIconBadge(iconSvg) {
     return `<span class="icon-badge">${iconSvg}</span>`;
 }
@@ -651,20 +859,22 @@ function getIconBadge(iconSvg) {
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
     const prayerNames = getActivePrayerNames();
+    const strings = getStrings();
+    const nowBadgeHtml = `<span class="now-badge">${strings.nowBadge}</span>`;
 
     const date = fullDate.getDate();
-    const month = fullDate.toLocaleString('bg', { month: 'long' });
+    const month = fullDate.toLocaleString(strings.dateLocale, { month: 'long' });
     const year = fullDate.getFullYear();
-    const weekday = fullDate.toLocaleString('bg', { weekday: 'long' });
+    const weekday = fullDate.toLocaleString(strings.dateLocale, { weekday: 'long' });
     const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
 
     let dayBadge = '';
     if (isToday(fullDate)) {
-        dayBadge = '<span class="day-badge day-badge--today">Днес</span>';
+        dayBadge = `<span class="day-badge day-badge--today">${strings.dayToday}</span>`;
     } else if (isYesterday(fullDate)) {
-        dayBadge = '<span class="day-badge">Вчера</span>';
+        dayBadge = `<span class="day-badge">${strings.dayYesterday}</span>`;
     } else if (isTomorrow(fullDate)) {
-        dayBadge = '<span class="day-badge">Утре</span>';
+        dayBadge = `<span class="day-badge">${strings.dayTomorrow}</span>`;
     }
 
     const ramadanBanner = getRamadanBannerHtml(fullDate);
@@ -711,7 +921,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
             </div>
             <div class="prayer-list">
                 <div class="prayer"${fajrInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}${prayerNames.fajr}${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}${prayerNames.fajr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(down, sunrise)}
                 </div>
                 <div class="prayer">
@@ -719,25 +929,25 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="time">${sunrise}</span>
                 </div>
                 <div class="prayer prayer--voluntary"${duhaInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.duha)}${prayerNames.duha}${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.duha)}${prayerNames.duha}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(duha, dhuhr)}
                 </div>
                 <div class="prayer${isFriday ? ' prayer--jumah' : ''}"${dhuhrInterval}>
                     <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${
         isFriday ? prayerNames.jumah : prayerNames.dhuhr
-    }${NOW_BADGE_HTML}</span>
+    }${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(dhuhr, asr)}
                 </div>
                 <div class="prayer"${asrInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${prayerNames.asr}${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${prayerNames.asr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(asr, maghrib)}
                 </div>
                 <div class="prayer"${maghribInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}${prayerNames.maghrib}${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}${prayerNames.maghrib}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(maghrib, isha)}
                 </div>
                 <div class="prayer"${ishaInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.isha)}${prayerNames.isha}${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.isha)}${prayerNames.isha}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(isha, nextDayFajr)}
                 </div>
                 <div class="prayer prayer--voluntary">
