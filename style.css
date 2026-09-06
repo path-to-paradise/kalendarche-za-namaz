@@ -475,6 +475,13 @@ main#content {
     display: flex;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    /* Swiper's own container sets touch-action: pan-x so vertical drags
+       go through its JS swipe handling instead of native scrolling.
+       Without this, a slide that overflows (common on Android, where
+       the viewport height shifts as the URL bar shows/hides) opts
+       itself back into native touch scrolling, which wins over Swiper
+       and makes it impossible to swipe to the next day. */
+    touch-action: pan-x;
     padding: clamp(1rem, 4vw, 2rem) clamp(0.85rem, 4vw, 1.75rem)
         calc(clamp(1rem, 4vw, 2rem) + var(--safe-bottom));
 }
