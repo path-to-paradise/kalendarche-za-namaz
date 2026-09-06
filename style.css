@@ -474,6 +474,17 @@ main#content {
     touch-action: pan-x;
     padding: clamp(14px, 4vw, 28px) clamp(12px, 4vw, 24px)
         calc(clamp(14px, 4vw, 28px) + var(--safe-bottom));
+    /* With 365 rendered days, .swiper-wrapper stacks into one giant
+       (~250,000px+) composited layer even though only 1-3 slides are
+       ever visible. That strains weaker Android GPUs during the swipe
+       animation and shows up as jank/stutter. content-visibility lets
+       the browser skip layout/paint/render for off-screen slides
+       entirely. Swiper already sets each slide's height via inline
+       style regardless of content, so this can't disturb Swiper's own
+       slide-position math. contain-intrinsic-height gives the browser
+       a placeholder height to use for off-screen slides. */
+    content-visibility: auto;
+    contain-intrinsic-height: auto 700px;
 }
 
 .day-card {
