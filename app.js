@@ -8,6 +8,52 @@ const PRAYER_ICONS = {
     tehajjud: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 14.3A6.6 6.6 0 1 1 9 4.3a5.4 5.4 0 0 0 7.5 10Z"/><path d="M19 3v2.2M17.9 4.1h2.2M6 15.5v1.8M5.1 16.4h1.8"/></svg>'
 };
 
+// Three sets of Bulgarian labels for the same 8 daily rows, so users can
+// pick whichever naming convention their mosque/community uses. Jumah
+// always overrides the Dhuhr label on Fridays, regardless of style.
+const PRAYER_NAME_STYLES = {
+    default: {
+        fajr: 'Сабах',
+        sunrise: 'Изгрев',
+        duha: 'Духа',
+        dhuhr: 'Пладнина',
+        jumah: 'Джумая',
+        asr: 'Икинди',
+        maghrib: 'Акшам',
+        isha: 'Еция / Витр',
+        tahajjud: 'Техадж-джуд'
+    },
+    arabic: {
+        fajr: 'Феджър',
+        sunrise: 'Изгрев',
+        duha: 'Духа',
+        dhuhr: 'Зухур',
+        jumah: 'Джумая',
+        asr: 'Асър',
+        maghrib: 'Магриб',
+        isha: 'Иша / Витр',
+        tahajjud: 'Тахаджуд'
+    },
+    descriptive: {
+        fajr: 'Зора',
+        sunrise: 'Изгрев',
+        duha: 'Духа',
+        dhuhr: 'Обяд',
+        jumah: 'Джумая',
+        asr: 'Следобяд',
+        maghrib: 'Залез',
+        isha: 'Нощ / Витр',
+        tahajjud: 'Тахаджуд'
+    }
+};
+
+const PRAYER_NAME_STYLE_STORAGE_KEY = 'prayerNameStyle';
+
+function getActivePrayerNames() {
+    const style = localStorage.getItem(PRAYER_NAME_STYLE_STORAGE_KEY);
+    return PRAYER_NAME_STYLES[style] || PRAYER_NAME_STYLES.default;
+}
+
 // Ramadan and Eid al-Fitr (Рамазан Байрам) dates depend on moon sighting and
 // are announced by the Bulgarian Grand Mufti's office (confirmed by the
 // government) shortly before each year. Add next year's entry once it is
@@ -254,6 +300,36 @@ function setupThemeSettings() {
         });
 }
 
+function setupPrayerNameStyleSettings(swiperInstance) {
+    const settingsModal = document.querySelector('#settings-modal');
+    const nameStyleButtons = settingsModal?.querySelectorAll(
+        '[data-prayer-name-style]'
+    );
+
+    let nameStyle =
+        localStorage.getItem(PRAYER_NAME_STYLE_STORAGE_KEY) || 'default';
+
+    const updateActiveButtons = () => {
+        nameStyleButtons?.forEach((button) => {
+            button.classList.toggle(
+                'is-active',
+                button.dataset.prayerNameStyle === nameStyle
+            );
+        });
+    };
+
+    updateActiveButtons();
+
+    nameStyleButtons?.forEach((button) => {
+        button.addEventListener('click', () => {
+            nameStyle = button.dataset.prayerNameStyle;
+            localStorage.setItem(PRAYER_NAME_STYLE_STORAGE_KEY, nameStyle);
+            updateActiveButtons();
+            rerenderSlides(swiperInstance);
+        });
+    });
+}
+
 const GA_MEASUREMENT_ID = 'G-NPSE0CR3QK';
 const COOKIE_CONSENT_STORAGE_KEY = 'cookieConsent';
 
@@ -319,7 +395,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     selectedCityElement.value = selectedCity;
 
-    const prayerTimeTable = await getTimeForSelectedCity(selectedCity);
+    currentPrayerTimeTable = await getTimeForSelectedCity(selectedCity);
 
     const swiperInstance = new Swiper('#swiper', {
         direction: 'vertical',
@@ -341,20 +417,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     selectedCityElement.addEventListener('change', (event) =>
         changeTimeToSelectedCity(event, swiperInstance)
     );
-    renderPrayerSlides(prayerTimeTable, swiperInstance);
+    setupPrayerNameStyleSettings(swiperInstance);
+    renderPrayerSlides(currentPrayerTimeTable, swiperInstance);
 
     setInterval(updateCurrentPrayerHighlight, 30000);
 });
+
+// Holds whatever prayer-time data is currently loaded so a naming-style
+// change can re-render all slides without re-fetching from the network.
+let currentPrayerTimeTable = null;
+
+function rerenderSlides(swiperInstance) {
+    swiperInstance.removeAllSlides();
+    renderPrayerSlides(currentPrayerTimeTable, swiperInstance);
+}
 
 async function changeTimeToSelectedCity(event, swiperInstance) {
     const element = event.target;
     const selectedCity = element.options[element.selectedIndex].value;
     localStorage.setItem('selectedCity', selectedCity);
 
-    const prayerTimeTable = await getTimeForSelectedCity(selectedCity);
-
-    swiperInstance.removeAllSlides();
-    renderPrayerSlides(prayerTimeTable, swiperInstance);
+    currentPrayerTimeTable = await getTimeForSelectedCity(selectedCity);
+    rerenderSlides(swiperInstance);
 }
 
 // Rendering always starts at yesterday, so today is always the 2nd slide.
@@ -566,6 +650,7 @@ function getIconBadge(iconSvg) {
 
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
+    const prayerNames = getActivePrayerNames();
 
     const date = fullDate.getDate();
     const month = fullDate.toLocaleString('bg', { month: 'long' });
@@ -626,37 +711,37 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
             </div>
             <div class="prayer-list">
                 <div class="prayer"${fajrInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}Сабах${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}${prayerNames.fajr}${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(down, sunrise)}
                 </div>
                 <div class="prayer">
-                    <span class="name">${getIconBadge(PRAYER_ICONS.sunrise)}Изгрев</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sunrise)}${prayerNames.sunrise}</span>
                     <span class="time">${sunrise}</span>
                 </div>
                 <div class="prayer prayer--voluntary"${duhaInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.duha)}Духа${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.duha)}${prayerNames.duha}${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(duha, dhuhr)}
                 </div>
                 <div class="prayer${isFriday ? ' prayer--jumah' : ''}"${dhuhrInterval}>
                     <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${
-        isFriday ? 'Джумая' : 'Пладнина'
+        isFriday ? prayerNames.jumah : prayerNames.dhuhr
     }${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(dhuhr, asr)}
                 </div>
                 <div class="prayer"${asrInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.sun)}Икинди${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${prayerNames.asr}${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(asr, maghrib)}
                 </div>
                 <div class="prayer"${maghribInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}Акшам${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}${prayerNames.maghrib}${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(maghrib, isha)}
                 </div>
                 <div class="prayer"${ishaInterval}>
-                    <span class="name">${getIconBadge(PRAYER_ICONS.isha)}Еция / Витр${NOW_BADGE_HTML}</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.isha)}${prayerNames.isha}${NOW_BADGE_HTML}</span>
                     ${getTimeRangeHtml(isha, nextDayFajr)}
                 </div>
                 <div class="prayer prayer--voluntary">
-                    <span class="name">${getIconBadge(PRAYER_ICONS.tehajjud)}Техадж-джуд</span>
+                    <span class="name">${getIconBadge(PRAYER_ICONS.tehajjud)}${prayerNames.tahajjud}</span>
                     ${getTimeRangeHtml(tehajjud, nextDayFajr)}
                 </div>
             </div>
