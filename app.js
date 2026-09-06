@@ -129,6 +129,59 @@ function getStrings() {
     return STRINGS[getLanguage()] || STRINGS.bg;
 }
 
+// English spellings follow Bulgaria's official (Streamlined System)
+// transliteration, the same one used on road signs and in passports.
+const CITY_NAMES = {
+    aytos: { bg: 'Айтос', en: 'Aytos' },
+    balchik: { bg: 'Балчик', en: 'Balchik' },
+    blagoevgrad: { bg: 'Благоевград', en: 'Blagoevgrad' },
+    burgas: { bg: 'Бургас', en: 'Burgas' },
+    byala: { bg: 'Бяла', en: 'Byala' },
+    varna: { bg: 'Варна', en: 'Varna' },
+    velikipreslav: { bg: 'Велики Преслав', en: 'Veliki Preslav' },
+    velikotarnovo: { bg: 'Велико Търново', en: 'Veliko Tarnovo' },
+    velingrad: { bg: 'Велинград', en: 'Velingrad' },
+    gornaoryahovitsa: { bg: 'Горна Оряховица', en: 'Gorna Oryahovitsa' },
+    gotzedelchev: { bg: 'Гоце Делчев', en: 'Gotse Delchev' },
+    dobrich: { bg: 'Добрич', en: 'Dobrich' },
+    isperih: { bg: 'Исперих', en: 'Isperih' },
+    kavarna: { bg: 'Каварна', en: 'Kavarna' },
+    kaolinovo: { bg: 'Каолиново', en: 'Kaolinovo' },
+    karlovo: { bg: 'Карлово', en: 'Karlovo' },
+    karnobat: { bg: 'Карнобат', en: 'Karnobat' },
+    kneja: { bg: 'Кнежа', en: 'Knezha' },
+    kotel: { bg: 'Котел', en: 'Kotel' },
+    krumovgrad: { bg: 'Крумовград', en: 'Krumovgrad' },
+    kubrat: { bg: 'Кубрат', en: 'Kubrat' },
+    kardjali: { bg: 'Кърджали', en: 'Kardzhali' },
+    lovech: { bg: 'Ловеч', en: 'Lovech' },
+    madan: { bg: 'Мадан', en: 'Madan' },
+    montana: { bg: 'Монтана', en: 'Montana' },
+    nikipol: { bg: 'Никопол', en: 'Nikopol' },
+    novazagora: { bg: 'Нова Загора', en: 'Nova Zagora' },
+    novipazar: { bg: 'Нови пазар', en: 'Novi Pazar' },
+    pazardzhik: { bg: 'Пазарджик', en: 'Pazardzhik' },
+    pleven: { bg: 'Плевен', en: 'Pleven' },
+    plovdiv: { bg: 'Пловдив', en: 'Plovdiv' },
+    provadiya: { bg: 'Провадия', en: 'Provadia' },
+    razgrad: { bg: 'Разград', en: 'Razgrad' },
+    ruse: { bg: 'Русе', en: 'Ruse' },
+    svistov: { bg: 'Свищов', en: 'Svishtov' },
+    silistra: { bg: 'Силистра', en: 'Silistra' },
+    sitovo: { bg: 'Ситово', en: 'Sitovo' },
+    sliven: { bg: 'Сливен', en: 'Sliven' },
+    smolyan: { bg: 'Смолян', en: 'Smolyan' },
+    sofia: { bg: 'София', en: 'Sofia' },
+    starazagora: { bg: 'Стара Загора', en: 'Stara Zagora' },
+    tvarditza: { bg: 'Твърдица', en: 'Tvarditsa' },
+    targoviste: { bg: 'Търговище', en: 'Targovishte' },
+    harmanli: { bg: 'Харманли', en: 'Harmanli' },
+    haskovo: { bg: 'Хасково', en: 'Haskovo' },
+    shumen: { bg: 'Шумен', en: 'Shumen' },
+    yakoruda: { bg: 'Якоруда', en: 'Yakoruda' },
+    yambol: { bg: 'Ямбол', en: 'Yambol' }
+};
+
 function applyTranslations() {
     const lang = getLanguage();
     const strings = STRINGS[lang] || STRINGS.bg;
@@ -146,6 +199,13 @@ function applyTranslations() {
         const key = el.dataset.i18nAria;
         if (strings[key] !== undefined) {
             el.setAttribute('aria-label', strings[key]);
+        }
+    });
+
+    document.querySelectorAll('#selected-city option').forEach((option) => {
+        const names = CITY_NAMES[option.value];
+        if (names) {
+            option.textContent = names[lang] || names.bg;
         }
     });
 }
