@@ -360,6 +360,11 @@ async function changeTimeToSelectedCity(event, swiperInstance) {
 // Rendering always starts at yesterday, so today is always the 2nd slide.
 const TODAY_SLIDE_INDEX = 1;
 
+// The elements checked by updateCurrentPrayerHighlight, kept narrow
+// (yesterday/today/tomorrow) instead of scanning all ~365 rendered
+// days on every periodic check.
+let activeDaySlides = [];
+
 function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
     let currentFullDate = new Date();
     currentFullDate.setHours(0, 0, 0, 0);
@@ -367,6 +372,8 @@ function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
 
     const oneYearFromNow = new Date(currentFullDate);
     oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+
+    const slideTemplates = [];
 
     while (currentFullDate < oneYearFromNow) {
         // Month is zero-indexed so we have to add 1 to get the current month
@@ -389,15 +396,28 @@ function renderPrayerSlides(allNamazForThisYear, swiperInstance) {
         );
         allNamazForCurrentDay.tehajjud = tehajjudPrayerTime;
 
-        const slideTemplate = getPrayerTemplate(
-            allNamazForCurrentDay,
-            currentFullDate,
-            allNamazForTheNextDay.down
+        slideTemplates.push(
+            getPrayerTemplate(
+                allNamazForCurrentDay,
+                currentFullDate,
+                allNamazForTheNextDay.down
+            )
         );
-        swiperInstance.appendSlide(slideTemplate);
 
         currentFullDate = getNextDate(currentFullDate, 1);
     }
+
+    // Insert every slide in a single batch instead of one call per day —
+    // appending 365 times individually forces Swiper to re-measure and
+    // update its layout on every call, which is slow enough to cause
+    // visible lag and dropped swipe gestures on low-powered devices.
+    swiperInstance.appendSlide(slideTemplates);
+
+    activeDaySlides = [
+        swiperInstance.slides[TODAY_SLIDE_INDEX - 1],
+        swiperInstance.slides[TODAY_SLIDE_INDEX],
+        swiperInstance.slides[TODAY_SLIDE_INDEX + 1]
+    ].filter(Boolean);
 
     swiperInstance.slideTo(TODAY_SLIDE_INDEX);
     updateCurrentPrayerHighlight();
@@ -407,18 +427,24 @@ function updateCurrentPrayerHighlight() {
     const now = new Date();
     let currentRow = null;
 
-    document.querySelectorAll('.prayer[data-start]').forEach((row) => {
-        const start = new Date(row.dataset.start);
-        const end = new Date(row.dataset.end);
-        if (now >= start && now < end) {
-            currentRow = row;
-        }
+    // The current interval can only ever fall within yesterday/today/
+    // tomorrow's data, so there is no need to scan every rendered day.
+    activeDaySlides.forEach((slide) => {
+        slide.querySelectorAll('.prayer[data-start]').forEach((row) => {
+            const start = new Date(row.dataset.start);
+            const end = new Date(row.dataset.end);
+            if (now >= start && now < end) {
+                currentRow = row;
+            }
+        });
     });
 
-    document.querySelectorAll('.prayer--current').forEach((row) => {
-        if (row !== currentRow) {
-            row.classList.remove('prayer--current');
-        }
+    activeDaySlides.forEach((slide) => {
+        slide.querySelectorAll('.prayer--current').forEach((row) => {
+            if (row !== currentRow) {
+                row.classList.remove('prayer--current');
+            }
+        });
     });
 
     currentRow?.classList.add('prayer--current');
