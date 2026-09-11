@@ -69,11 +69,9 @@ const STRINGS = {
         ramadanStart: 'Начало на Рамазан',
         ramadanDay: (n) => `${n}-и ден от Рамазан`,
         ramadanLastDayPrefix: 'Последен ден от Рамазан · ',
-        forbiddenUntil: (label, time) => `Забранено за молитва до ${label} (${time})`,
-        forbiddenZenith: (start, label, end) =>
-            `Забранено за молитва от ${start} до ${label} (${end})`,
-        forbiddenAfterSunrise: (sunriseLabel, time) =>
-            `Забранено за молитва до ${time} (15 мин. след ${sunriseLabel})`,
+        forbiddenWindow: (startTime, endTime, note) =>
+            `Забранено за молитва от ${startTime} до ${endTime} (${note})`,
+        sunriseBufferNote: (sunriseLabel) => `15 мин. след ${sunriseLabel}`,
         forbiddenInfoAriaLabel: 'Научете повече',
         forbiddenInfoTitle: 'Забранени времена за молитва',
         forbiddenInfoIntro:
@@ -84,8 +82,16 @@ const STRINGS = {
             'По пладне, когато слънцето е точно в зенита си, до влизане на времето за Пладнина (в петък това не важи, заради Джумая).',
         forbiddenInfoItem3:
             'От времето на Икинди до пълния залез на слънцето (Акшам).',
-        forbiddenInfoException:
-            'Изключение е сунна намазът от два ракята преди фарза на Сабах — той е разрешен, но след него не се препоръчва друга доброволна молитва до Изгрев.',
+        forbiddenInfoAllowedTitle: 'Позволено (по конкретна причина)',
+        forbiddenInfoAllowed1: 'Навакса на пропусната задължителна молитва (када)',
+        forbiddenInfoAllowed2:
+            'Поздравителна молитва при влизане в джамия (тахиятул-масджид)',
+        forbiddenInfoAllowed3: 'Двата ракята сунна на Сабах, преди фарза',
+        forbiddenInfoAllowed4: 'Двата ракята след абдест (тахарат)',
+        forbiddenInfoNotAllowed:
+            'Не е позволена обикновена доброволна (нафила) молитва без конкретна причина.',
+        forbiddenInfoJanazahNote:
+            'За молитва за починал (джаназа) в тези периоди мненията на учените се различават — консултирайте се с имам.',
         forbiddenInfoSourcePre: 'Извор: хадиси в Сахих ал-Бухари и Сахих Муслим.',
         forbiddenInfoSourceLink: 'Повече информация',
         dateLocale: 'bg'
@@ -140,11 +146,9 @@ const STRINGS = {
         ramadanStart: 'Start of Ramadan',
         ramadanDay: (n) => `Day ${n} of Ramadan`,
         ramadanLastDayPrefix: 'Last day of Ramadan · ',
-        forbiddenUntil: (label, time) => `Prayer forbidden until ${label} (${time})`,
-        forbiddenZenith: (start, label, end) =>
-            `Prayer forbidden from ${start} until ${label} (${end})`,
-        forbiddenAfterSunrise: (sunriseLabel, time) =>
-            `Prayer forbidden until ${time} (15 min after ${sunriseLabel})`,
+        forbiddenWindow: (startTime, endTime, note) =>
+            `Prayer forbidden from ${startTime} until ${endTime} (${note})`,
+        sunriseBufferNote: (sunriseLabel) => `15 min after ${sunriseLabel}`,
         forbiddenInfoAriaLabel: 'Learn more',
         forbiddenInfoTitle: 'Times when prayer is forbidden',
         forbiddenInfoIntro:
@@ -155,8 +159,16 @@ const STRINGS = {
             "At midday, when the sun is directly at its zenith, until Dhuhr begins (this doesn't apply on Fridays, because of Jumah).",
         forbiddenInfoItem3:
             'From Asr until the sun has completely set (Maghrib).',
-        forbiddenInfoException:
-            "An exception is made for the two-rak'ah Sunnah prayer before the obligatory Fajr prayer — it is permitted, but no other voluntary prayer should be offered after it until sunrise.",
+        forbiddenInfoAllowedTitle: 'Allowed (for a specific reason)',
+        forbiddenInfoAllowed1: "Making up (qada) a missed obligatory prayer",
+        forbiddenInfoAllowed2:
+            'The mosque-greeting prayer (tahiyyat al-masjid) upon entering a mosque',
+        forbiddenInfoAllowed3: "The two rak'ahs Sunnah of Fajr, before the obligatory prayer",
+        forbiddenInfoAllowed4: "The two rak'ahs after ablution (wudu)",
+        forbiddenInfoNotAllowed:
+            'Ordinary voluntary (nafl) prayer without a specific reason is not allowed.',
+        forbiddenInfoJanazahNote:
+            'For funeral prayer (janazah) during these periods, scholarly opinions vary — consult a local imam.',
         forbiddenInfoSourcePre: 'Source: hadith in Sahih al-Bukhari and Sahih Muslim.',
         forbiddenInfoSourceLink: 'Read more',
         dateLocale: 'en-GB'
@@ -993,31 +1005,15 @@ const FORBIDDEN_ICON_SVG =
 
 // Voluntary (nafl) prayer is discouraged/forbidden in three windows:
 // from Fajr until sunrise, around solar noon until Dhuhr, and from Asr
-// until Maghrib. The Fajr/Asr windows reuse the same start times already
-// computed for those rows' own highlighting, so only an end time is
-// needed; the noon window's start (zenith) isn't otherwise displayed
-// anywhere, so it's shown explicitly. Each note is a button opening
+// until Maghrib. Every note always shows both the exact start and end
+// clock times, plus a short note naming what the end boundary is (a
+// prayer name, or "N min after sunrise"). Each note is a button opening
 // #forbidden-info-modal (wired via event delegation in
 // setupForbiddenTimesInfo, since these are regenerated for every one of
 // the ~365 rendered days).
-function getForbiddenNoteButtonHtml(text) {
+function getForbiddenNoteHtml(startTime, endTime, note) {
+    const text = getStrings().forbiddenWindow(startTime, endTime, note);
     return `<button type="button" class="forbidden-note" data-open-forbidden-info aria-label="${getStrings().forbiddenInfoAriaLabel}">${FORBIDDEN_ICON_SVG}<span>${text}</span></button>`;
-}
-
-function getForbiddenNoteHtml(label, time) {
-    return getForbiddenNoteButtonHtml(getStrings().forbiddenUntil(label, time));
-}
-
-function getForbiddenZenithNoteHtml(startTime, label, endTime) {
-    return getForbiddenNoteButtonHtml(
-        getStrings().forbiddenZenith(startTime, label, endTime)
-    );
-}
-
-function getForbiddenAfterSunriseNoteHtml(sunriseLabel, time) {
-    return getForbiddenNoteButtonHtml(
-        getStrings().forbiddenAfterSunrise(sunriseLabel, time)
-    );
 }
 
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
@@ -1088,7 +1084,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     );
     const zenithNoteHtml = isFriday
         ? ''
-        : getForbiddenZenithNoteHtml(zenith, prayerNames.dhuhr, dhuhr);
+        : getForbiddenNoteHtml(zenith, dhuhr, prayerNames.dhuhr);
 
     return `
     <div class="swiper-slide">
@@ -1103,7 +1099,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}${prayerNames.fajr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(down, sunrise)}
                 </div>
-                ${getForbiddenAfterSunriseNoteHtml(prayerNames.sunrise, forbiddenAfterSunriseEnd)}
+                ${getForbiddenNoteHtml(down, forbiddenAfterSunriseEnd, getStrings().sunriseBufferNote(prayerNames.sunrise))}
                 <div class="prayer">
                     <span class="name">${getIconBadge(PRAYER_ICONS.sunrise)}${prayerNames.sunrise}</span>
                     <span class="time">${sunrise}</span>
@@ -1123,7 +1119,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${prayerNames.asr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(asr, maghrib)}
                 </div>
-                ${getForbiddenNoteHtml(prayerNames.maghrib, maghrib)}
+                ${getForbiddenNoteHtml(asr, maghrib, prayerNames.maghrib)}
                 <div class="prayer"${maghribInterval}>
                     <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}${prayerNames.maghrib}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(maghrib, isha)}
