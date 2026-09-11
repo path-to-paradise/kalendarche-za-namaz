@@ -70,41 +70,37 @@ const STRINGS = {
         ramadanDay: (n) => `${n}-и ден от Рамазан`,
         ramadanLastDayPrefix: 'Последен ден от Рамазан · ',
         forbiddenWindow: (startTime, endTime, note) =>
-            `Забранено за намаз от ${startTime} до ${endTime} (${note})`,
+            `Забранено за нафиле намаз от ${startTime} до ${endTime} (${note})`,
         forbiddenAfterPrayer: (prayerLabel, endTime) =>
-            `Забранено за намаз от (след като изкланяш ${prayerLabel}) до ${endTime} часа`,
+            `Забранено за нафиле намаз от (след като изкланяш ${prayerLabel}) до ${endTime} часа`,
         forbiddenInfoAriaLabel: 'Научете повече',
         forbiddenInfoTitle: 'Забранени времена за намаз',
-        forbiddenInfoNotAllowed:
-            'Не е позволен обикновен доброволен (нафила) намаз без конкретна причина.',
-        forbiddenInfoIntro: 'Според хадиси на Пророка ﷺ, това важи за три периода през деня:',
-        forbiddenInfoItem1:
-            'След намаза Сабах, до около 15 минути след Изгрев — докато слънцето напълно се издигне.',
-        forbiddenInfoItem2:
-            'По пладне, когато слънцето е точно в зенита си, до влизане на времето за Пладнина (в петък това не важи, заради Джумая).',
-        forbiddenInfoItem3:
-            'След намаза Икинди, до пълния залез на слънцето (Акшам).',
+        forbiddenInfoNotAllowed: 'Нафиле намаз без причина не е позволен.',
+        forbiddenInfoIntro: 'Три периода през деня:',
+        forbiddenInfoItem1: 'След Сабах, до ~15 мин. след Изгрев.',
+        forbiddenInfoItem2: 'По пладне, в зенита (без петък — заради Джумая).',
+        forbiddenInfoItem3: 'След Икинди, до залез (Акшам).',
         forbiddenInfoPrayedNote:
-            'Забраната започва, след като извършиш намаза Сабах/Икинди — не от самото начало на времето му. Часовете, показани в приложението, отбелязват началото на времето като ориентир.',
-        forbiddenInfoAllowedTitle: 'Позволено (по конкретна причина)',
-        forbiddenInfoAllowed1: 'Навакса на пропуснат задължителен намаз (када)',
-        forbiddenInfoAllowed2:
-            'Поздравителен намаз при влизане в джамия (тахиятул-масджид)',
-        forbiddenInfoAllowed3: 'Двата ракята сунна на Сабах, преди фарза',
-        forbiddenInfoAllowed4: 'Двата ракята след абдест (тахарат)',
-        forbiddenInfoJanazahNote:
-            'За намаз за починал (джаназа) в тези периоди мненията на учените се различават — консултирайте се с имам.',
-        forbiddenInfoSourcePre: 'Извор: хадиси в Сахих ал-Бухари и Сахих Муслим.',
+            'Забраната е след извършване на Сабах/Икинди, не от началото на времето му.',
+        forbiddenInfoAllowedTitle: 'Позволено (по причина)',
+        forbiddenInfoAllowed1: 'Када (пропуснат намаз)',
+        forbiddenInfoAllowed2: 'Тахиятул-масджид',
+        forbiddenInfoAllowed3: 'Сунна на Сабах',
+        forbiddenInfoAllowed4: 'След абдест',
+        forbiddenInfoJanazahNote: 'За джаназа мненията се различават — питайте имам.',
+        forbiddenInfoSourcePre: 'Извор: Сахих ал-Бухари и Сахих Муслим.',
         forbiddenInfoSourceLink: 'Повече информация',
-        recommendedNote: (firstThirdEnd, midnight) =>
-            `Еция: най-добре в първата третина на нощта (до ${firstThirdEnd}), задължително преди полунощ (${midnight}). Витр — през втората половина, ако ще станеш.`,
+        recommendedIshaNote: (firstThirdEnd, midnight) =>
+            `Еция: най-добре в 1-вата третина (до ${firstThirdEnd}), крайно — полунощ (${midnight})`,
+        recommendedWitrNote: 'Витр: през 2-рата половина на нощта, ако ще станеш',
         recommendedInfoAriaLabel: 'Научете повече',
-        recommendedInfoTitle: 'Препоръчително време за Еция и Витр',
-        recommendedInfoIsha: (firstThirdEnd, midnight) =>
-            `Времето за Еция продължава до полунощ (${midnight}) и не е позволено да се отлага след това (Сахих Муслим, 964). Най-доброто време е в първата третина на нощта (до ${firstThirdEnd}) — не е грешно да се моли веднага след влизане на времето, но леко отлагане е за предпочитане, тъй като Пророкът ﷺ обичал да отлага Еция за кратко.`,
-        recommendedInfoWitr:
-            'За Витр: „Който се страхува, че няма да стане през втората половина на нощта, нека се моли Витр в началото ѝ; а който е сигурен, че ще стане, нека се моли Витр в края на нощта, защото намазът тогава се засвидетелства [от ангелите] и е по-добър“ (Сахих Муслим). Часът за Тахаджуд по-горе е и препоръчителното време за Витр, ако си сигурен, че ще станеш.',
-        recommendedInfoSourcePre: 'Извор: хадиси в Сахих ал-Бухари и Сахих Муслим.',
+        recommendedInfoIshaTitle: 'Препоръчително време за Еция',
+        recommendedInfoIshaBody: (firstThirdEnd, midnight) =>
+            `Еция е позволена до полунощ (${midnight}) — не по-късно (Сахих Муслим, 964). Най-добре — в първата третина на нощта (до ${firstThirdEnd}).`,
+        recommendedInfoWitrTitle: 'Препоръчително време за Витр',
+        recommendedInfoWitrBody:
+            'Ако си сигурен, че ще станеш — по-добре във втората половина на нощта (Сахих Муслим). Ако не си сигурен — веднага след Еция.',
+        recommendedInfoSourcePre: 'Извор: Сахих ал-Бухари и Сахих Муслим.',
         dateLocale: 'bg'
     },
     en: {
@@ -158,42 +154,39 @@ const STRINGS = {
         ramadanDay: (n) => `Day ${n} of Ramadan`,
         ramadanLastDayPrefix: 'Last day of Ramadan · ',
         forbiddenWindow: (startTime, endTime, note) =>
-            `Prayer forbidden from ${startTime} until ${endTime} (${note})`,
+            `Voluntary prayer forbidden from ${startTime} until ${endTime} (${note})`,
         forbiddenAfterPrayer: (prayerLabel, endTime) =>
-            `Prayer forbidden from (once you've prayed ${prayerLabel}) until ${endTime}`,
+            `Voluntary prayer forbidden from (once you've prayed ${prayerLabel}) until ${endTime}`,
         forbiddenInfoAriaLabel: 'Learn more',
         forbiddenInfoTitle: 'Times when prayer is forbidden',
-        forbiddenInfoIntro:
-            'According to hadith from the Prophet ﷺ, voluntary prayer should not be offered during three periods of the day:',
-        forbiddenInfoItem1:
-            'After the Fajr prayer, until about 15 minutes after sunrise — until the sun has fully risen.',
-        forbiddenInfoItem2:
-            "At midday, when the sun is directly at its zenith, until Dhuhr begins (this doesn't apply on Fridays, because of Jumah).",
-        forbiddenInfoItem3:
-            'After the Asr prayer, until the sun has completely set (Maghrib).',
-        forbiddenInfoPrayedNote:
-            "The prohibition begins once you've actually prayed Fajr/Asr — not from the very start of their time. The clock times shown in the app mark the start of that time as a reference point.",
-        forbiddenInfoAllowedTitle: 'Allowed (for a specific reason)',
-        forbiddenInfoAllowed1: "Making up (qada) a missed obligatory prayer",
-        forbiddenInfoAllowed2:
-            'The mosque-greeting prayer (tahiyyat al-masjid) upon entering a mosque',
-        forbiddenInfoAllowed3: "The two rak'ahs Sunnah of Fajr, before the obligatory prayer",
-        forbiddenInfoAllowed4: "The two rak'ahs after ablution (wudu)",
         forbiddenInfoNotAllowed:
-            'Ordinary voluntary (nafl) prayer without a specific reason is not allowed.',
+            'Voluntary (nafl) prayer without a specific reason is not allowed.',
+        forbiddenInfoIntro: 'Three periods of the day:',
+        forbiddenInfoItem1: 'After Fajr, until ~15 min after sunrise.',
+        forbiddenInfoItem2: "At zenith, midday (not on Fridays — Jumah).",
+        forbiddenInfoItem3: 'After Asr, until sunset (Maghrib).',
+        forbiddenInfoPrayedNote:
+            "The prohibition starts once Fajr/Asr is prayed, not at the start of its time.",
+        forbiddenInfoAllowedTitle: 'Allowed (for a reason)',
+        forbiddenInfoAllowed1: 'Qada (making up a missed prayer)',
+        forbiddenInfoAllowed2: 'Tahiyyat al-masjid',
+        forbiddenInfoAllowed3: "Sunnah of Fajr",
+        forbiddenInfoAllowed4: "After ablution (wudu)",
         forbiddenInfoJanazahNote:
-            'For funeral prayer (janazah) during these periods, scholarly opinions vary — consult a local imam.',
-        forbiddenInfoSourcePre: 'Source: hadith in Sahih al-Bukhari and Sahih Muslim.',
+            'For funeral prayer, opinions vary — ask a local imam.',
+        forbiddenInfoSourcePre: 'Source: Sahih al-Bukhari and Sahih Muslim.',
         forbiddenInfoSourceLink: 'Read more',
-        recommendedNote: (firstThirdEnd, midnight) =>
-            `Isha: best within the first third of the night (until ${firstThirdEnd}), must be prayed before midnight (${midnight}). Witr in the second half, if you'll wake up.`,
+        recommendedIshaNote: (firstThirdEnd, midnight) =>
+            `Isha: best in the 1st third (until ${firstThirdEnd}), latest — midnight (${midnight})`,
+        recommendedWitrNote: "Witr: in the 2nd half of the night, if you'll wake up",
         recommendedInfoAriaLabel: 'Learn more',
-        recommendedInfoTitle: 'Recommended time for Isha and Witr',
-        recommendedInfoIsha: (firstThirdEnd, midnight) =>
-            `Isha's time lasts until midnight (${midnight}), and it is not permissible to delay it beyond that (Sahih Muslim, 964). The best time is within the first third of the night (until ${firstThirdEnd}) — praying right at the start of its time is fine, but a short delay is preferable, since the Prophet ﷺ liked to delay Isha a little.`,
-        recommendedInfoWitr:
-            "For Witr: \"Whoever fears he may not get up in the later part of the night should pray Witr in the first part of it; whoever is confident he will get up in the last part should pray Witr then, since prayer at the end of the night is witnessed [by the angels], and that is better\" (Sahih Muslim). The Tahajjud time shown above is also the recommended Witr time, if you're confident you'll wake up.",
-        recommendedInfoSourcePre: 'Source: hadith in Sahih al-Bukhari and Sahih Muslim.',
+        recommendedInfoIshaTitle: 'Recommended time for Isha',
+        recommendedInfoIshaBody: (firstThirdEnd, midnight) =>
+            `Isha is valid until midnight (${midnight}) — not later (Sahih Muslim, 964). Best: within the first third of the night (until ${firstThirdEnd}).`,
+        recommendedInfoWitrTitle: 'Recommended time for Witr',
+        recommendedInfoWitrBody:
+            "If you're confident you'll wake up — better in the second half of the night (Sahih Muslim). If not — right after Isha.",
+        recommendedInfoSourcePre: 'Source: Sahih al-Bukhari and Sahih Muslim.',
         dateLocale: 'en-GB'
     }
 };
@@ -573,27 +566,37 @@ function setupForbiddenTimesInfo() {
 function setupRecommendedTimesInfo() {
     const modal = document.querySelector('#recommended-info-modal');
     const closeButton = modal?.querySelector('.modal__close');
-    const ishaParagraph = modal?.querySelector('#recommended-info-isha');
+    const titleEl = modal?.querySelector('#recommended-info-title');
+    const bodyEl = modal?.querySelector('#recommended-info-body');
 
     if (!modal) {
         return;
     }
 
     // Same delegated-listener approach as setupForbiddenTimesInfo, since
-    // these notes are also regenerated for every rendered day. Both
-    // times are day-specific, so they're read from the clicked
-    // button's data attributes and used to fill in the Isha paragraph
-    // fresh on every open (which also means it's always rendered in
-    // the current language, with no extra wiring needed).
+    // these notes are also regenerated for every rendered day. Isha and
+    // Witr share this one modal shell, swapping title/body based on
+    // data-topic — Isha's two times are day-specific and read from the
+    // clicked button's data attributes (which also means everything is
+    // always rendered in the current language, with no extra wiring
+    // needed).
     document.addEventListener('click', (event) => {
         const button = event.target.closest('[data-open-recommended-info]');
-        if (button && ishaParagraph) {
-            ishaParagraph.textContent = getStrings().recommendedInfoIsha(
+        if (!button || !titleEl || !bodyEl) {
+            return;
+        }
+        const strings = getStrings();
+        if (button.dataset.topic === 'witr') {
+            titleEl.textContent = strings.recommendedInfoWitrTitle;
+            bodyEl.textContent = strings.recommendedInfoWitrBody;
+        } else {
+            titleEl.textContent = strings.recommendedInfoIshaTitle;
+            bodyEl.textContent = strings.recommendedInfoIshaBody(
                 button.dataset.firstThird,
                 button.dataset.midnight
             );
-            modal.hidden = false;
         }
+        modal.hidden = false;
     });
 
     closeButton?.addEventListener('click', () => {
@@ -1128,14 +1131,20 @@ const RECOMMENDED_ICON_SVG =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5c-3 3.2-4.5 6-4.5 9a4.5 4.5 0 0 0 9 0c0-3-1.5-5.8-4.5-9Z"/></svg>';
 
 // Positive guidance (best/recommended time), styled distinctly from
-// the red forbidden-time warnings. Opens #recommended-info-modal via
-// the same delegated-click pattern as the forbidden notes. Both times
-// are specific to this day, so they're stashed in data attributes and
-// read back when the modal opens (see setupRecommendedTimesInfo) —
-// the modal itself is a single static element, not regenerated per day.
-function getRecommendedNoteHtml(firstThirdEnd, midnight) {
-    const text = getStrings().recommendedNote(firstThirdEnd, midnight);
-    return `<button type="button" class="recommended-note" data-open-recommended-info data-first-third="${firstThirdEnd}" data-midnight="${midnight}" aria-label="${getStrings().recommendedInfoAriaLabel}">${RECOMMENDED_ICON_SVG}<span>${text}</span></button>`;
+// the red forbidden-time warnings. Isha and Witr are separate notes
+// (different subjects, different hadith), each opening the same
+// #recommended-info-modal with its title/body swapped via data-topic
+// (see setupRecommendedTimesInfo) — the modal itself is a single
+// static element, not regenerated per day. Isha's two times are
+// specific to this day, so they're stashed in data attributes too.
+function getRecommendedIshaNoteHtml(firstThirdEnd, midnight) {
+    const text = getStrings().recommendedIshaNote(firstThirdEnd, midnight);
+    return `<button type="button" class="recommended-note" data-open-recommended-info data-topic="isha" data-first-third="${firstThirdEnd}" data-midnight="${midnight}" aria-label="${getStrings().recommendedInfoAriaLabel}">${RECOMMENDED_ICON_SVG}<span>${text}</span></button>`;
+}
+
+function getRecommendedWitrNoteHtml() {
+    const text = getStrings().recommendedWitrNote;
+    return `<button type="button" class="recommended-note" data-open-recommended-info data-topic="witr" aria-label="${getStrings().recommendedInfoAriaLabel}">${RECOMMENDED_ICON_SVG}<span>${text}</span></button>`;
 }
 
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
@@ -1252,11 +1261,12 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.isha)}${prayerNames.isha}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(isha, nextDayFajr)}
                 </div>
-                ${getRecommendedNoteHtml(firstThirdEnd, nightMidpoint)}
+                ${getRecommendedIshaNoteHtml(firstThirdEnd, nightMidpoint)}
                 <div class="prayer prayer--voluntary">
                     <span class="name">${getIconBadge(PRAYER_ICONS.tehajjud)}${prayerNames.tahajjud}</span>
                     ${getTimeRangeHtml(tehajjud, nextDayFajr)}
                 </div>
+                ${getRecommendedWitrNoteHtml()}
             </div>
         </div>
     </div>
