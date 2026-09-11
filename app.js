@@ -77,11 +77,13 @@ const STRINGS = {
         forbiddenInfoIntro:
             'Според хадиси на Пророка ﷺ, доброволна молитва не се извършва в три периода през деня:',
         forbiddenInfoItem1:
-            'От времето на Сабах до около 15 минути след Изгрев — докато слънцето напълно се издигне.',
+            'След молитвата Сабах, до около 15 минути след Изгрев — докато слънцето напълно се издигне.',
         forbiddenInfoItem2:
             'По пладне, когато слънцето е точно в зенита си, до влизане на времето за Пладнина (в петък това не важи, заради Джумая).',
         forbiddenInfoItem3:
-            'От времето на Икинди до пълния залез на слънцето (Акшам).',
+            'След молитвата Икинди, до пълния залез на слънцето (Акшам).',
+        forbiddenInfoPrayedNote:
+            'Забраната започва, след като извършиш молитвата Сабах/Икинди — не от самото начало на времето ѝ. Часовете, показани в приложението, отбелязват началото на времето като ориентир.',
         forbiddenInfoAllowedTitle: 'Позволено (по конкретна причина)',
         forbiddenInfoAllowed1: 'Навакса на пропусната задължителна молитва (када)',
         forbiddenInfoAllowed2:
@@ -154,11 +156,13 @@ const STRINGS = {
         forbiddenInfoIntro:
             'According to hadith from the Prophet ﷺ, voluntary prayer should not be offered during three periods of the day:',
         forbiddenInfoItem1:
-            'From Fajr until about 15 minutes after sunrise — until the sun has fully risen.',
+            'After the Fajr prayer, until about 15 minutes after sunrise — until the sun has fully risen.',
         forbiddenInfoItem2:
             "At midday, when the sun is directly at its zenith, until Dhuhr begins (this doesn't apply on Fridays, because of Jumah).",
         forbiddenInfoItem3:
-            'From Asr until the sun has completely set (Maghrib).',
+            'After the Asr prayer, until the sun has completely set (Maghrib).',
+        forbiddenInfoPrayedNote:
+            "The prohibition begins once you've actually prayed Fajr/Asr — not from the very start of their time. The clock times shown in the app mark the start of that time as a reference point.",
         forbiddenInfoAllowedTitle: 'Allowed (for a specific reason)',
         forbiddenInfoAllowed1: "Making up (qada) a missed obligatory prayer",
         forbiddenInfoAllowed2:
