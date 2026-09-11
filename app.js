@@ -96,7 +96,7 @@ const STRINGS = {
         recommendedInfoAriaLabel: 'Научете повече',
         recommendedInfoIshaTitle: 'Препоръчително време за Еция',
         recommendedInfoIshaBody: (firstThirdEnd, midnight) =>
-            `Еция е позволена до полунощ (${midnight}) — не по-късно (Сахих Муслим, 964). Най-добре — в първата третина на нощта (до ${firstThirdEnd}).`,
+            `Времето за Еция продължава до полунощ (${midnight}) и не е позволено да се отлага след това (Сахих Муслим, 964). Най-доброто време е в първата третина на нощта (до ${firstThirdEnd}) — не е грешно да се моли веднага след влизане на времето, но леко отлагане е за предпочитане, тъй като Пророкът ﷺ обичал да отлага Еция за кратко.`,
         recommendedInfoWitrTitle: 'Препоръчително време за Витр',
         recommendedInfoWitrBody:
             'Ако си сигурен, че ще станеш — по-добре във втората половина на нощта (Сахих Муслим). Ако не си сигурен — веднага след Еция.',
@@ -182,7 +182,7 @@ const STRINGS = {
         recommendedInfoAriaLabel: 'Learn more',
         recommendedInfoIshaTitle: 'Recommended time for Isha',
         recommendedInfoIshaBody: (firstThirdEnd, midnight) =>
-            `Isha is valid until midnight (${midnight}) — not later (Sahih Muslim, 964). Best: within the first third of the night (until ${firstThirdEnd}).`,
+            `Isha's time lasts until midnight (${midnight}), and it is not permissible to delay it beyond that (Sahih Muslim, 964). The best time is within the first third of the night (until ${firstThirdEnd}) — praying right at the start of its time is fine, but a short delay is preferable, since the Prophet ﷺ liked to delay Isha a little.`,
         recommendedInfoWitrTitle: 'Recommended time for Witr',
         recommendedInfoWitrBody:
             "If you're confident you'll wake up — better in the second half of the night (Sahih Muslim). If not — right after Isha.",
@@ -289,7 +289,8 @@ const PRAYER_NAME_STYLES = {
             jumah: 'Джумая',
             asr: 'Икинди',
             maghrib: 'Акшам',
-            isha: 'Еция / Витр',
+            isha: 'Еция',
+            witr: 'Витр',
             tahajjud: 'Техадж-джуд'
         },
         arabic: {
@@ -300,7 +301,8 @@ const PRAYER_NAME_STYLES = {
             jumah: 'Джумая',
             asr: 'Асър',
             maghrib: 'Магриб',
-            isha: 'Иша / Витр',
+            isha: 'Иша',
+            witr: 'Витр',
             tahajjud: 'Тахаджуд'
         },
         descriptive: {
@@ -311,7 +313,8 @@ const PRAYER_NAME_STYLES = {
             jumah: 'Джумая',
             asr: 'Следобяд',
             maghrib: 'Залез',
-            isha: 'Нощ / Витр',
+            isha: 'Нощ',
+            witr: 'Витр',
             tahajjud: 'Тахаджуд'
         }
     },
@@ -324,7 +327,8 @@ const PRAYER_NAME_STYLES = {
             jumah: 'Jumah',
             asr: 'Asr',
             maghrib: 'Maghrib',
-            isha: 'Isha / Witr',
+            isha: 'Isha',
+            witr: 'Witr',
             tahajjud: 'Tahajjud'
         },
         arabic: {
@@ -335,7 +339,8 @@ const PRAYER_NAME_STYLES = {
             jumah: 'Jumah',
             asr: 'Asr',
             maghrib: 'Maghrib',
-            isha: 'Isha / Witr',
+            isha: 'Isha',
+            witr: 'Witr',
             tahajjud: 'Tahajjud'
         },
         descriptive: {
@@ -346,7 +351,8 @@ const PRAYER_NAME_STYLES = {
             jumah: 'Jumah',
             asr: 'Afternoon',
             maghrib: 'Sunset',
-            isha: 'Night / Witr',
+            isha: 'Night',
+            witr: 'Witr',
             tahajjud: 'Tahajjud'
         }
     }
@@ -1262,11 +1268,15 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     ${getTimeRangeHtml(isha, nextDayFajr)}
                 </div>
                 ${getRecommendedIshaNoteHtml(firstThirdEnd, nightMidpoint)}
+                <div class="prayer">
+                    <span class="name">${getIconBadge(PRAYER_ICONS.isha)}${prayerNames.witr}</span>
+                    ${getTimeRangeHtml(isha, nextDayFajr)}
+                </div>
+                ${getRecommendedWitrNoteHtml()}
                 <div class="prayer prayer--voluntary">
                     <span class="name">${getIconBadge(PRAYER_ICONS.tehajjud)}${prayerNames.tahajjud}</span>
                     ${getTimeRangeHtml(tehajjud, nextDayFajr)}
                 </div>
-                ${getRecommendedWitrNoteHtml()}
             </div>
         </div>
     </div>
