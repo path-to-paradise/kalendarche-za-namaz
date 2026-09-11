@@ -707,6 +707,49 @@ main#content {
     text-decoration-color: rgba(252, 165, 165, 0.4);
 }
 
+/* Positive guidance (best/recommended time), styled with the active
+   accent color rather than a fixed warning color — this is a helpful
+   tip, not a caution. */
+.recommended-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    padding: 0.35em 0.9em;
+    margin-top: -0.15em;
+    border: none;
+    border-radius: var(--radius-md);
+    background: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary-dark);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: left;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.recommended-note:active {
+    background: rgba(var(--color-primary-rgb), 0.18);
+}
+
+.recommended-note svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex: 0 0 auto;
+}
+
+.recommended-note span {
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--color-primary-rgb), 0.35);
+    text-underline-offset: 0.2em;
+}
+
+:root[data-theme='dark'] .recommended-note {
+    color: var(--color-primary);
+}
+
 .prayer--voluntary {
     background: transparent;
     border: 1px dashed var(--color-border);
