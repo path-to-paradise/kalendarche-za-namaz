@@ -69,6 +69,25 @@ const STRINGS = {
         ramadanStart: 'Начало на Рамазан',
         ramadanDay: (n) => `${n}-и ден от Рамазан`,
         ramadanLastDayPrefix: 'Последен ден от Рамазан · ',
+        forbiddenUntil: (label, time) => `Забранено за молитва до ${label} (${time})`,
+        forbiddenZenith: (start, label, end) =>
+            `Забранено за молитва от ${start} до ${label} (${end})`,
+        forbiddenAfterSunrise: (sunriseLabel, time) =>
+            `Забранено за молитва до ${time} (15 мин. след ${sunriseLabel})`,
+        forbiddenInfoAriaLabel: 'Научете повече',
+        forbiddenInfoTitle: 'Забранени времена за молитва',
+        forbiddenInfoIntro:
+            'Според хадиси на Пророка ﷺ, доброволна молитва не се извършва в три периода през деня:',
+        forbiddenInfoItem1:
+            'От времето на Сабах до около 15 минути след Изгрев — докато слънцето напълно се издигне.',
+        forbiddenInfoItem2:
+            'По пладне, когато слънцето е точно в зенита си, до влизане на времето за Пладнина (в петък това не важи, заради Джумая).',
+        forbiddenInfoItem3:
+            'От времето на Икинди до пълния залез на слънцето (Акшам).',
+        forbiddenInfoException:
+            'Изключение е сунна намазът от два ракята преди фарза на Сабах — той е разрешен, но след него не се препоръчва друга доброволна молитва до Изгрев.',
+        forbiddenInfoSourcePre: 'Извор: хадиси в Сахих ал-Бухари и Сахих Муслим.',
+        forbiddenInfoSourceLink: 'Повече информация',
         dateLocale: 'bg'
     },
     en: {
@@ -121,6 +140,25 @@ const STRINGS = {
         ramadanStart: 'Start of Ramadan',
         ramadanDay: (n) => `Day ${n} of Ramadan`,
         ramadanLastDayPrefix: 'Last day of Ramadan · ',
+        forbiddenUntil: (label, time) => `Prayer forbidden until ${label} (${time})`,
+        forbiddenZenith: (start, label, end) =>
+            `Prayer forbidden from ${start} until ${label} (${end})`,
+        forbiddenAfterSunrise: (sunriseLabel, time) =>
+            `Prayer forbidden until ${time} (15 min after ${sunriseLabel})`,
+        forbiddenInfoAriaLabel: 'Learn more',
+        forbiddenInfoTitle: 'Times when prayer is forbidden',
+        forbiddenInfoIntro:
+            'According to hadith from the Prophet ﷺ, voluntary prayer should not be offered during three periods of the day:',
+        forbiddenInfoItem1:
+            'From Fajr until about 15 minutes after sunrise — until the sun has fully risen.',
+        forbiddenInfoItem2:
+            "At midday, when the sun is directly at its zenith, until Dhuhr begins (this doesn't apply on Fridays, because of Jumah).",
+        forbiddenInfoItem3:
+            'From Asr until the sun has completely set (Maghrib).',
+        forbiddenInfoException:
+            "An exception is made for the two-rak'ah Sunnah prayer before the obligatory Fajr prayer — it is permitted, but no other voluntary prayer should be offered after it until sunrise.",
+        forbiddenInfoSourcePre: 'Source: hadith in Sahih al-Bukhari and Sahih Muslim.',
+        forbiddenInfoSourceLink: 'Read more',
         dateLocale: 'en-GB'
     }
 };
@@ -470,6 +508,33 @@ function applyColorTheme(colorTheme) {
     }
 }
 
+function setupForbiddenTimesInfo() {
+    const modal = document.querySelector('#forbidden-info-modal');
+    const closeButton = modal?.querySelector('.modal__close');
+
+    if (!modal) {
+        return;
+    }
+
+    // The notes themselves are regenerated for every rendered day (~365
+    // buttons), so a single delegated listener is used instead of
+    // attaching one per button.
+    document.addEventListener('click', (event) => {
+        if (event.target.closest('[data-open-forbidden-info]')) {
+            modal.hidden = false;
+        }
+    });
+
+    closeButton?.addEventListener('click', () => {
+        modal.hidden = true;
+    });
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.hidden = true;
+        }
+    });
+}
+
 function setupThemeSettings() {
     const settingsButton = document.querySelector('#settings-button');
     const settingsModal = document.querySelector('#settings-modal');
@@ -651,6 +716,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyTranslations();
     setupInstallPrompt();
     setupThemeSettings();
+    setupForbiddenTimesInfo();
     setupCookieConsent();
 
     let selectedCity = localStorage.getItem('selectedCity');
@@ -842,6 +908,12 @@ function addMinutesToTimeString(timeString, minutesToAdd) {
 // (Turkish) tradition, which places this ~45 minutes after sunrise.
 const DUHA_MINUTES_AFTER_SUNRISE = 45;
 
+// The prohibition after Fajr doesn't end exactly at sunrise — it extends
+// until the sun has fully cleared the horizon ("the height of a spear",
+// commonly ~12 minutes). Using the safer 15-minute margin, per fatwa
+// guidance, rather than cutting it as close as possible.
+const FORBIDDEN_MINUTES_AFTER_SUNRISE = 15;
+
 function calculateTehajjudPrayer(maghribPrayerTime, nextDayFajrPrayerTime) {
     if (!maghribPrayerTime || !nextDayFajrPrayerTime) {
         return 'липсва';
@@ -916,6 +988,38 @@ function getIconBadge(iconSvg) {
     return `<span class="icon-badge">${iconSvg}</span>`;
 }
 
+const FORBIDDEN_ICON_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.5 5.5l13 13"/></svg>';
+
+// Voluntary (nafl) prayer is discouraged/forbidden in three windows:
+// from Fajr until sunrise, around solar noon until Dhuhr, and from Asr
+// until Maghrib. The Fajr/Asr windows reuse the same start times already
+// computed for those rows' own highlighting, so only an end time is
+// needed; the noon window's start (zenith) isn't otherwise displayed
+// anywhere, so it's shown explicitly. Each note is a button opening
+// #forbidden-info-modal (wired via event delegation in
+// setupForbiddenTimesInfo, since these are regenerated for every one of
+// the ~365 rendered days).
+function getForbiddenNoteButtonHtml(text) {
+    return `<button type="button" class="forbidden-note" data-open-forbidden-info aria-label="${getStrings().forbiddenInfoAriaLabel}">${FORBIDDEN_ICON_SVG}<span>${text}</span></button>`;
+}
+
+function getForbiddenNoteHtml(label, time) {
+    return getForbiddenNoteButtonHtml(getStrings().forbiddenUntil(label, time));
+}
+
+function getForbiddenZenithNoteHtml(startTime, label, endTime) {
+    return getForbiddenNoteButtonHtml(
+        getStrings().forbiddenZenith(startTime, label, endTime)
+    );
+}
+
+function getForbiddenAfterSunriseNoteHtml(sunriseLabel, time) {
+    return getForbiddenNoteButtonHtml(
+        getStrings().forbiddenAfterSunrise(sunriseLabel, time)
+    );
+}
+
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
     const { down, sunrise, dhuhr, asr, maghrib, isha, tehajjud } = prayerTimes;
     const prayerNames = getActivePrayerNames();
@@ -941,6 +1045,10 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
 
     const isFriday = fullDate.getDay() === 5;
     const duha = addMinutesToTimeString(sunrise, DUHA_MINUTES_AFTER_SUNRISE);
+    const forbiddenAfterSunriseEnd = addMinutesToTimeString(
+        sunrise,
+        FORBIDDEN_MINUTES_AFTER_SUNRISE
+    );
 
     const nextCalendarDay = new Date(fullDate);
     nextCalendarDay.setDate(nextCalendarDay.getDate() + 1);
@@ -971,6 +1079,17 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
         nextDayFajrDate
     );
 
+    // Solar noon (zenith) is, by definition, the midpoint between sunrise
+    // and sunset — no separate astronomical data needed. The window from
+    // zenith until Dhuhr begins is forbidden for voluntary prayer, except
+    // on Fridays (a recognised exception tied to Jumah).
+    const zenith = minutesToTimeString(
+        (timeStringToMinutes(sunrise) + timeStringToMinutes(maghrib)) / 2
+    );
+    const zenithNoteHtml = isFriday
+        ? ''
+        : getForbiddenZenithNoteHtml(zenith, prayerNames.dhuhr, dhuhr);
+
     return `
     <div class="swiper-slide">
         <div class="day-card">
@@ -984,6 +1103,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}${prayerNames.fajr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(down, sunrise)}
                 </div>
+                ${getForbiddenAfterSunriseNoteHtml(prayerNames.sunrise, forbiddenAfterSunriseEnd)}
                 <div class="prayer">
                     <span class="name">${getIconBadge(PRAYER_ICONS.sunrise)}${prayerNames.sunrise}</span>
                     <span class="time">${sunrise}</span>
@@ -992,6 +1112,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.duha)}${prayerNames.duha}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(duha, dhuhr)}
                 </div>
+                ${zenithNoteHtml}
                 <div class="prayer${isFriday ? ' prayer--jumah' : ''}"${dhuhrInterval}>
                     <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${
         isFriday ? prayerNames.jumah : prayerNames.dhuhr
@@ -1002,6 +1123,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${prayerNames.asr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(asr, maghrib)}
                 </div>
+                ${getForbiddenNoteHtml(prayerNames.maghrib, maghrib)}
                 <div class="prayer"${maghribInterval}>
                     <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}${prayerNames.maghrib}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(maghrib, isha)}
