@@ -71,7 +71,8 @@ const STRINGS = {
         ramadanLastDayPrefix: 'Последен ден от Рамазан · ',
         forbiddenWindow: (startTime, endTime, note) =>
             `Забранено за молитва от ${startTime} до ${endTime} (${note})`,
-        sunriseBufferNote: (sunriseLabel) => `15 мин. след ${sunriseLabel}`,
+        forbiddenAfterPrayer: (prayerLabel, endTime) =>
+            `Забранено за молитва от (след като изкланяш ${prayerLabel}) до ${endTime} часа`,
         forbiddenInfoAriaLabel: 'Научете повече',
         forbiddenInfoTitle: 'Забранени времена за молитва',
         forbiddenInfoIntro:
@@ -150,7 +151,8 @@ const STRINGS = {
         ramadanLastDayPrefix: 'Last day of Ramadan · ',
         forbiddenWindow: (startTime, endTime, note) =>
             `Prayer forbidden from ${startTime} until ${endTime} (${note})`,
-        sunriseBufferNote: (sunriseLabel) => `15 min after ${sunriseLabel}`,
+        forbiddenAfterPrayer: (prayerLabel, endTime) =>
+            `Prayer forbidden from (once you've prayed ${prayerLabel}) until ${endTime}`,
         forbiddenInfoAriaLabel: 'Learn more',
         forbiddenInfoTitle: 'Times when prayer is forbidden',
         forbiddenInfoIntro:
@@ -1009,15 +1011,29 @@ const FORBIDDEN_ICON_SVG =
 
 // Voluntary (nafl) prayer is discouraged/forbidden in three windows:
 // from Fajr until sunrise, around solar noon until Dhuhr, and from Asr
-// until Maghrib. Every note always shows both the exact start and end
-// clock times, plus a short note naming what the end boundary is (a
-// prayer name, or "N min after sunrise"). Each note is a button opening
-// #forbidden-info-modal (wired via event delegation in
-// setupForbiddenTimesInfo, since these are regenerated for every one of
-// the ~365 rendered days).
-function getForbiddenNoteHtml(startTime, endTime, note) {
-    const text = getStrings().forbiddenWindow(startTime, endTime, note);
+// until Maghrib. Each note is a button opening #forbidden-info-modal
+// (wired via event delegation in setupForbiddenTimesInfo, since these
+// are regenerated for every one of the ~365 rendered days).
+function getForbiddenNoteButtonHtml(text) {
     return `<button type="button" class="forbidden-note" data-open-forbidden-info aria-label="${getStrings().forbiddenInfoAriaLabel}">${FORBIDDEN_ICON_SVG}<span>${text}</span></button>`;
+}
+
+// Used for the zenith window, whose start (solar noon) is a precise,
+// objective instant — showing the exact clock time is accurate.
+function getForbiddenNoteHtml(startTime, endTime, note) {
+    return getForbiddenNoteButtonHtml(
+        getStrings().forbiddenWindow(startTime, endTime, note)
+    );
+}
+
+// Used for the Fajr/Asr windows, whose true start is "once you've
+// prayed it", not the clock start of that prayer's own time — showing
+// a specific start clock time would imply false precision. Names the
+// prayer instead (see #forbidden-info-modal for the full explanation).
+function getForbiddenAfterPrayerNoteHtml(prayerLabel, endTime) {
+    return getForbiddenNoteButtonHtml(
+        getStrings().forbiddenAfterPrayer(prayerLabel, endTime)
+    );
 }
 
 function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
@@ -1103,7 +1119,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.fajr)}${prayerNames.fajr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(down, sunrise)}
                 </div>
-                ${getForbiddenNoteHtml(down, forbiddenAfterSunriseEnd, getStrings().sunriseBufferNote(prayerNames.sunrise))}
+                ${getForbiddenAfterPrayerNoteHtml(prayerNames.fajr, forbiddenAfterSunriseEnd)}
                 <div class="prayer">
                     <span class="name">${getIconBadge(PRAYER_ICONS.sunrise)}${prayerNames.sunrise}</span>
                     <span class="time">${sunrise}</span>
@@ -1123,7 +1139,7 @@ function getPrayerTemplate(prayerTimes, fullDate, nextDayFajr) {
                     <span class="name">${getIconBadge(PRAYER_ICONS.sun)}${prayerNames.asr}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(asr, maghrib)}
                 </div>
-                ${getForbiddenNoteHtml(asr, maghrib, prayerNames.maghrib)}
+                ${getForbiddenAfterPrayerNoteHtml(prayerNames.asr, maghrib)}
                 <div class="prayer"${maghribInterval}>
                     <span class="name">${getIconBadge(PRAYER_ICONS.sunset)}${prayerNames.maghrib}${nowBadgeHtml}</span>
                     ${getTimeRangeHtml(maghrib, isha)}
