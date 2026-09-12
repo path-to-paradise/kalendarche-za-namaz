@@ -972,6 +972,13 @@ main#content {
         height: 1.5em;
         border-radius: 0.5em;
     }
+
+    .forbidden-note,
+    .recommended-note {
+        padding: 0.2em 0.7em;
+        margin-top: -0.1em;
+        font-size: 10px;
+    }
 }
 
 @media (max-height: 480px) {
@@ -1010,6 +1017,13 @@ main#content {
         width: 1.3em;
         height: 1.3em;
         border-radius: 0.4em;
+    }
+
+    .forbidden-note,
+    .recommended-note {
+        padding: 0.1em 0.6em;
+        margin-top: -0.05em;
+        font-size: 9.5px;
     }
 }
 
